@@ -1,0 +1,66 @@
+{
+  "$id": "https://github.com/dmcblue/opentask/blob/master/schemas/task.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Represents a task",
+  "type": "object",
+  "required": [ "name", "command" ],
+  "properties": {
+	  
+    "name": {
+      "description": "Name to use at command line",
+      "type": "string"
+    },
+	  
+    "description": {
+      "description": "Describes the task to human user",
+      "type": "string"
+    },
+	  
+    "group": {
+      "description": "Way to group tasks together",
+      "type": "object",
+	  "required": [ "name" ],
+	  "properties": {
+		"name": {
+		  "description": "Name of the group",
+		  "type": "string"	
+		},
+		"rank": {
+		  "description": "Used to order the running of group tasks, ties broken by precedence in file",
+		  "type": "integer"	
+		}
+	  }
+    },
+	  
+    "command": {
+      "description": "The executable command",
+      "type": "string"
+    },
+	
+    "arguments": {
+      "description": "List of the arguments",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+	
+	"cwd": {
+      "description": "Current Working Directory for the command",
+      "type": "string"
+    },
+
+	"platform-specifics": {
+      "description": "Adjusts the task options by platform",
+      "type": "object",
+	  "propertyNames": {
+	    "$ref": "https://github.com/dmcblue/opentask/blob/master/schemas/platform.schema.json"
+	  },
+      "properties": {
+        "": {
+          "$ref": "https://github.com/dmcblue/opentask/blob/master/schemas/platform-specifics.schema.json"
+        }
+      }
+    }
+  }
+}

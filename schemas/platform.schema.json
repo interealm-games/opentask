@@ -1,0 +1,7 @@
+{
+  "$id": "https://github.com/dmcblue/opentask/blob/master/schemas/platform.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Represents supported platforms",
+  "type": "string",
+  "enum": ["windows", "macos", "linux", "bsd"]
+}

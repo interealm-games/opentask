@@ -1,0 +1,19 @@
+{
+  "$id": "https://github.com/dmcblue/opentask/blob/master/schemas/options.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Command line options",
+  "type": "object",
+  "patternProperties": {
+    "^-": {
+	  "oneOf" : [{
+		"type": "string"
+	  },{
+		"type": "array",
+		"items": {
+		  "type": "string"
+		}
+	  }] 
+	}
+  },
+  "additionalProperties": false
+}

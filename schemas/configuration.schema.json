@@ -1,0 +1,61 @@
+{
+  "$id": "https://github.com/dmcblue/opentask/blob/master/schemas/configuration.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Configures tasks to be run",
+  "type": "object",
+  "required": [ "version", "tasks" ],
+  "properties": {
+	  
+    "version": {
+      "description": "version of this schema",
+      "type": "string"
+    },
+	
+    "tasks": {
+      "description": "The tasks that can be run",
+      "type": "array",
+      "items": {
+        "$ref": "https://github.com/dmcblue/opentask/blob/master/schemas/task.schema.json"
+      }
+    },
+	
+	"requirements": {
+	  "description": "Way to group tasks together",
+      "type": "array",
+	  "items": {
+		"type": "object",  
+        "description": "The tasks that can be run",
+		"required": [ "name" ],
+		"propertyNames": {
+			"oneOf" : [{
+			  "enum": ["name", "command", "source", "version"]
+		    },{
+		       "$ref": "https://github.com/dmcblue/opentask/blob/master/schemas/platform.schema.json"
+			}]
+	    },
+        "properties": {
+		  "name": {
+			"description": "Name of the program",
+			"type": "string"
+		  },
+		  "command": {
+			"description": "Default name of the executable as would be called from the terminal",
+			"type": "string"
+		  },
+		  "source": {
+			"description": "A path or url to where one can find the executable to install it.",
+			"type": "string"
+		  },
+		  "version": {
+			"description": "Semantic version",
+			"type": "string"
+		  },
+          "": {
+			"description": "Replacement for 'command' on specific platforms",
+            "type": "string"
+          }
+	    }
+	  }
+	}
+  }
+}

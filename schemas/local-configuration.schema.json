@@ -1,0 +1,26 @@
+{
+  "$id": "https://github.com/dmcblue/opentask/blob/master/schemas/local-configuration.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Adjusts the master configuration for a local user",
+  "type": "object",
+  "required": [ "version", "tasks" ],
+  "properties": {
+	  
+    "version": {
+      "description": "version of this schema",
+      "type": "string"
+    },
+	
+	"commands" : {
+	  "description": "Name of programs from Configurations requirements as key, path to program as value",
+	  "type": "object",
+	  "properties": {
+          "": {
+			"description": "Path to the program",
+            "type": "string"
+          }
+	  }
+	  "additionalProperties":true
+	}
+  }
+}

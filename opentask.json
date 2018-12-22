@@ -1,0 +1,28 @@
+{
+	"version": "0.0.1",
+	
+	"requirements": [{
+		"name": "git",
+		"command": "git"
+	},{
+		"name": "ls",
+		"command": "ls",
+		"windows": "dir"
+	}],
+		
+	"tasks": [{
+		"name": "fetch",
+		"description": "Gets remote code",
+		"group": {
+			"name": "build",
+			"rank": 1
+		},
+		"command": "git",
+		"arguments": ["pull"],
+		
+	},{
+		"name": "folders",
+		"description": "Prints all the folders",
+		"command": "ls"
+	}]
+}

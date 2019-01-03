@@ -19,7 +19,7 @@
 			"description": "Path to the program",
             "type": "string"
           }
-	  }
+	  },
 	  "additionalProperties":true
 	}
   }

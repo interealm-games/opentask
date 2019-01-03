@@ -1,10 +1,12 @@
 # Features
 
-- [] Runs basic task commend
-- [] Runs group commands
-- [] Lists all tasks
-- [] Lists all groups and their tasks
-- [] Help text
+- [x] Runs basic task commend
+- [x] Runs group commands
+- [x] Lists all tasks
+- [x] Lists all groups and their tasks
+- [x] Help text
 - [] Checks for bad configuration and gives helpful feedback
-- [] Properly adjusts task command for specified system
+- [x] Properly adjusts task command for specified system
 - [] Command for config check
+- [] Checks if all required programs are installed.
+- [] Lists the required programs?

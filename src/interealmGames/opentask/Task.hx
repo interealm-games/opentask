@@ -87,6 +87,12 @@ class Task
 		return arguments;
 	}
 	
+	/**
+	 * Use Configuration#resolveCommand instead
+	 * @param	configuration
+	 * @param	localConfiguration
+	 * @return
+	 */
 	public function resolveCommand(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):String {
 		var command = this.command;
 		var platform = PlatformTools.resolvePlatform();

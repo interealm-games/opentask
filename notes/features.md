@@ -9,4 +9,4 @@
 - [x] Properly adjusts task command for specified system
 - [] Command for config check
 - [] Checks if all required programs are installed.
-- [] Lists the required programs?
+- [x] Lists the required programs?

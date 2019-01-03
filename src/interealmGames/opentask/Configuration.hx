@@ -16,7 +16,7 @@ class Configuration
 	public var version:String;
 	
 	/** The required programs needed to run the tasks */
-	public var requirements:Dictionary<String, Requirement> = new Dictionary();
+	public var _requirements:Dictionary<String, Requirement> = new Dictionary();
 	
 	/** The tasks that can be run */
 	private var _tasks:Dictionary<String, Task> = new Dictionary();
@@ -28,10 +28,7 @@ class Configuration
 		
 		if (Reflect.hasField(configurationObject, 'requirements')) {
 			for (requirementObject in configurationObject.requirements) {
-				var requirement = new Requirement(requirementObject);
-				if (!this.requirements.exists(requirement.command)) {
-					this.requirements.set(requirement.command, requirement);
-				}
+				this.addRequirement(new Requirement(requirementObject));
 			}
 		}
 		
@@ -48,16 +45,30 @@ class Configuration
 		}
 	}
 	
+	public function addRequirement(requirement:Requirement) {
+		if (!this._requirements.exists(requirement.command)) {
+			this._requirements.set(requirement.command, requirement);
+		}
+	}
+	
+	public function countRequirements():Int {
+		return DictionaryTools.size(this._requirements);
+	}
+	
 	public function countTasks():Int {
 		return DictionaryTools.size(this._tasks);
 	}
 	
 	public function getRequirement(command:String):Null<Requirement> {
-		return this.requirements.get(command);
+		return this._requirements.get(command);
 	}
 	
 	public function getTask(taskName:String):Null<Task> {
 		return this._tasks.get(taskName);
+	}
+	
+	public function hasRequirement(command:String) {
+		return this._requirements.exists(command);
 	}
 	
 	public function hasTask(taskName:String) {
@@ -88,6 +99,35 @@ class Configuration
 		}
 		
 		return groups;
+	}
+	
+	public function requirements():Iterator<Requirement> {
+		return this._requirements.iterator();
+	}
+	
+	public function resolveCommand(command:String, localConfiguration:Null<LocalConfiguration>):String {
+		var _command = command;
+		var platform = PlatformTools.resolvePlatform();
+		
+		if (localConfiguration != null) {
+			if (localConfiguration.hasCommand(command)) {
+				_command = localConfiguration.getCommand(command);
+			}
+		} else {
+			var requirement = this.getRequirement(command);
+			if (requirement == null) {
+				//should this be an error?
+				// For now, just a warning
+				//trace('No found requirement for this command');
+				Log.warning('No requirement found for this command');
+			} else {
+				if (requirement.platforms.exists(platform)) {
+					_command = requirement.platforms.get(platform);
+				}
+			}
+		}
+		
+		return _command;
 	}
 	
 	public function tasks():Iterator<Task> {

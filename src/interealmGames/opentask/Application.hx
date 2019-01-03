@@ -28,7 +28,9 @@ import interealmGames.opentask.Log;
 class Application 
 {
 	static public var COMMAND_LIST = "list";
-	static public var COMMAND_REQUIREMENTS = "requirments";
+	static public var COMMAND_REQUIREMENTS = "requirements";
+	static public var COMMAND_REQUIREMENTS_LIST = "list";
+	static public var COMMAND_REQUIREMENTS_TEST = "test";
 	static public var COMMAND_RUN = "run";
 	static public var COMMAND_RUN_GROUP = "rungroup";
 	
@@ -76,6 +78,7 @@ class Application
 			
 			var validCommands:Array<String> = [
 				Application.COMMAND_LIST,
+				Application.COMMAND_REQUIREMENTS,
 				Application.COMMAND_RUN,
 				Application.COMMAND_RUN_GROUP
 			];
@@ -89,7 +92,10 @@ class Application
 			if (command == Application.COMMAND_LIST) {
 				this.list(this.configuration, this.configurationFilePath);
 			} else if (command == Application.COMMAND_REQUIREMENTS) {
-				this.requirements();
+				if (arguments.length < 3) {
+					throw new MissingCommandError();
+				}
+				this.requirements(arguments[2], this.configuration, this.localConfiguration);
 			} else if (command == Application.COMMAND_RUN) {
 				if (arguments.length < 3) {
 					throw new MissingArgumentError('Task Name');
@@ -136,7 +142,11 @@ class Application
 				Help.display();
 			}
 			
-			if (Std.is(error, TaskDoesNotExistError) || Std.is(error, GroupDoesNotExistError) || Std.is(error, MissingArgumentError)) {
+			if (
+				Std.is(error, TaskDoesNotExistError) 
+					|| Std.is(error, GroupDoesNotExistError) 
+					|| Std.is(error, MissingArgumentError)
+			) {
 				this.list(this.configuration, this.configurationFilePath);
 			}
 		}
@@ -144,7 +154,7 @@ class Application
 		Sys.exit(error != null ? 1 : 0);
 	}
 	
-	public function list(configuration:Configuration, taskPath:String) {
+	public function list(configuration:Configuration, taskPath:String):Void {
 		if(configuration.countTasks() > 0) {
 			Log.printLine("Available Tasks:");
 			Log.printLine("----------------");
@@ -219,11 +229,24 @@ class Application
 		return localConfiguration;
 	}
 	
-	public function requirements() {
+	public function requirements(command:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
+		var validCommands:Array<String> = [
+			Application.COMMAND_REQUIREMENTS_LIST,
+			Application.COMMAND_REQUIREMENTS_TEST
+		];
 		
+		if (validCommands.indexOf(command) == -1) {
+			throw new InvalidCommandError(command);
+		}
+		
+		if (command == Application.COMMAND_REQUIREMENTS_LIST) {
+			this.showRequirements(configuration, localConfiguration);
+		} else if (command == Application.COMMAND_REQUIREMENTS_TEST) {
+			this.testRequirements(configuration, localConfiguration);
+		}
 	}
 	
-	public function run(taskName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>) {
+	public function run(taskName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		var task = configuration.getTask(taskName);
 		
 		if (task == null) {
@@ -239,7 +262,7 @@ class Application
 			Log.printLine('Set Working Directory: $cwd');
 			Sys.setCwd(cwd);
 		}
-		var command = task.resolveCommand(configuration, localConfiguration);
+		var command = configuration.resolveCommand(task.command, localConfiguration);
 		var arguments = task.resolveArguments();
 		
 		var line = command + ' ' + arguments.join(' ');
@@ -252,7 +275,7 @@ class Application
 		}
 	}
 	
-	public function runGroup(groupName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>) {
+	public function runGroup(groupName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		var groups = configuration.groups();
 		if (!groups.exists(groupName)) {
 			throw new GroupDoesNotExistError(groupName);
@@ -267,7 +290,7 @@ class Application
 		}
 	}
 	
-	public function setConfigurationPaths(options:OptionSet) {
+	public function setConfigurationPaths(options:OptionSet):Void {
 		if (options.hasShortOption('d') || options.hasLongOption('config-dir')) {
 			var path = '';
 			
@@ -324,5 +347,32 @@ class Application
 		if (!FileSystem.exists(this.configurationFilePath)) {
 			throw new FileDoesNotExistsError(this.configurationFilePath);
 		}
+	}
+	
+	public function showRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
+		if(configuration.countRequirements() > 0) {
+			Log.printLine("Required Programs:");
+			Log.printLine("----------------");
+			for (requirement in configuration.requirements()) {
+				Log.printLine(requirement.name);
+				var line = requirement.name;
+				var command = configuration.resolveCommand(requirement.command, localConfiguration);
+				var commandLabel = "Command" + (command == requirement.command ? "" : " (localized)") + ": ";
+				
+				Log.printLine("\t" + commandLabel + command);
+				Log.printLine("\tVersion: " + (requirement.version.length > 0 ? requirement.version : "(not specified)"));
+				
+				Log.printLine();
+			}
+		} else {
+			Log.warning("No required programs in configurations");
+		}
+	}
+	
+	public function testRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
+		if(configuration.countRequirements() > 0) {
+				Log.printLine("Available Tasks:");
+				Log.printLine("----------------");
+			}
 	}
 }

@@ -24,8 +24,8 @@ Commands:
   list
     Lists the names and descriptions of all available tasks.
 
-  requirements
-    Lists the programs the tasks depend on.
+  requirements [list | check]
+    'list' shows all programs needed for the tasks. 'check' verifies that all the programs are installed and available.
 	
   run <task-name>
     Runs the command for the named task.

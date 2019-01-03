@@ -1,28 +1,22 @@
 package interealmGames.opentask;
 
-import interealmGames.common.fileSystem.FileSystem;
-import interealmGames.common.CommandLine;
+import haxe.io.Output;
+import interealmGames.common.fileSystem.FileSystemExtension;
+import interealmGames.common.commandLine.CommandLine;
+import interealmGames.opentask.Configuration;
+import interealmGames.opentask.errors.JsonParsingError;
+import interealmGames.opentask.errors.BaseError;
 import neko.Lib;
 
 /**
- * ...
- * @author dmcblue
+ * Opentask
  */
 class Main 
 {
+		
 	
 	static function main() 
 	{
-		var options = CommandLine.getOptions();
-		trace(options);
-		
-		var arguments = CommandLine.getArguments();
-		trace(arguments);
-		
-		var paths = FileSystem.recursiveLoop("C:/www/interealm-games/editor-frontend/browser/src/interealmGames/browser/components", "scss");
-		for (path in paths) {
-			trace(path);
-		}
+		var application = new Application();
 	}
-	
 }

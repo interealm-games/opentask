@@ -7,7 +7,7 @@
   "properties": {
 	  
     "name": {
-      "description": "Name to use at command line",
+      "description": "Name to use at command line with the opentask executable",
       "type": "string"
     },
 	  
@@ -16,19 +16,22 @@
       "type": "string"
     },
 	  
-    "group": {
+    "groups": {
       "description": "Way to group tasks together",
-      "type": "object",
-	  "required": [ "name" ],
-	  "properties": {
-		"name": {
-		  "description": "Name of the group",
-		  "type": "string"	
-		},
-		"rank": {
-		  "description": "Used to order the running of group tasks, ties broken by precedence in file",
-		  "type": "integer"	
-		}
+	  "type": "array",
+	  "items": {
+        "type": "object",
+	    "required": [ "name" ],
+	    "properties": {
+		  "name": {
+		    "description": "Name of the group",
+		    "type": "string"	
+	  	  },
+		  "rank": {
+		    "description": "Used to order the running of group tasks, ties broken by precedence in file",
+		    "type": "integer"	
+		  }
+	    }
 	  }
     },
 	  
@@ -50,7 +53,7 @@
       "type": "string"
     },
 
-	"platform-specifics": {
+	"platformSpecifics": {
       "description": "Adjusts the task options by platform",
       "type": "object",
 	  "propertyNames": {

@@ -20,11 +20,11 @@
     },
 	
 	"requirements": {
-	  "description": "Way to group tasks together",
+	  "description": "The required programs needed to run the tasks",
       "type": "array",
 	  "items": {
 		"type": "object",  
-        "description": "The tasks that can be run",
+        "description": "Describes a program",
 		"required": [ "name" ],
 		"propertyNames": {
 			"oneOf" : [{
@@ -39,7 +39,7 @@
 			"type": "string"
 		  },
 		  "command": {
-			"description": "Default name of the executable as would be called from the terminal",
+			"description": "Default name/path of the executable as would be called from the terminal",
 			"type": "string"
 		  },
 		  "source": {
@@ -47,7 +47,7 @@
 			"type": "string"
 		  },
 		  "version": {
-			"description": "Semantic version",
+			"description": "Semantic version of the program to be used",
 			"type": "string"
 		  },
           "": {

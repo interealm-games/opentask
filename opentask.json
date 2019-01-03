@@ -13,13 +13,12 @@
 	"tasks": [{
 		"name": "fetch",
 		"description": "Gets remote code",
-		"group": {
+		"groups": [{
 			"name": "build",
 			"rank": 1
-		},
+		}],
 		"command": "git",
-		"arguments": ["pull"],
-		
+		"arguments": ["pull"]
 	},{
 		"name": "folders",
 		"description": "Prints all the folders",

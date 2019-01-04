@@ -355,7 +355,6 @@ class Application
 			Log.printLine("----------------");
 			for (requirement in configuration.requirements()) {
 				Log.printLine(requirement.name);
-				var line = requirement.name;
 				var command = configuration.resolveCommand(requirement.command, localConfiguration);
 				var commandLabel = "Command" + (command == requirement.command ? "" : " (localized)") + ": ";
 				
@@ -371,8 +370,21 @@ class Application
 	
 	public function testRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		if(configuration.countRequirements() > 0) {
-				Log.printLine("Available Tasks:");
-				Log.printLine("----------------");
+			Log.printLine("Testing Requirements:");
+			Log.printLine("----------------");
+			for (requirement in configuration.requirements()) {
+				Log.printStart("Testing: " + requirement.name + "...");
+				var command = configuration.resolveCommand(requirement.command, localConfiguration);
+				var testArgument = requirement.resolveTestArgument();
+				trace(testArgument);
+				var exitCode = Sys.command(command, [testArgument]);
+				// var a = new sys.io.Process("echo dd", null );
+				Log.printEnd(exitCode == 0 ? 'installed.' : 'NOT FOUND!');
+				
+				Log.printLine();
 			}
+		} else {
+			Log.warning("No required programs in configurations");
+		}	
 	}
 }

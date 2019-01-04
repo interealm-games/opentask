@@ -110,7 +110,7 @@ class Task
 				Log.warning('No requirement found for this command');
 			} else {
 				if (requirement.platforms.exists(platform)) {
-					command = requirement.platforms.get(platform);
+					command = requirement.resolveCommand(platform);
 				}
 			}
 		}

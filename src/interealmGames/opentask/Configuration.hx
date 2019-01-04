@@ -122,7 +122,7 @@ class Configuration
 				Log.warning('No requirement found for this command');
 			} else {
 				if (requirement.platforms.exists(platform)) {
-					_command = requirement.platforms.get(platform);
+					_command = requirement.resolveCommand(platform);
 				}
 			}
 		}

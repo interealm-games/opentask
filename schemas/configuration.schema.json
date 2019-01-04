@@ -50,9 +50,12 @@
 			"description": "Semantic version of the program to be used",
 			"type": "string"
 		  },
+		  "testArgument": {
+			"description": "Argument used to test the installation of the program which will have exit code 0. Default is '--version'.",
+			"type": "string"
+		  },
           "": {
-			"description": "Replacement for 'command' on specific platforms",
-            "type": "string"
+			"$ref": "https://github.com/dmcblue/opentask/blob/master/schemas/platform-specific-requirement.schema.json"
           }
 	    }
 	  }

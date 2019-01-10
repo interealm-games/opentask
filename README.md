@@ -18,4 +18,5 @@ A few tweaks will need to be made to accomplish a few other goals.
 
 Schemas will be written in [Json Schema](https://json-schema.org/)
 
-
+haxe -cp src -cp common/src -neko ./bin/opentask.n -main interealmGames.opentask.Main
+nekotools boot bin/opentask.n

@@ -1,8 +1,7 @@
 package interealmGames.opentask;
 
 /**
- * ...
- * @author dmcblue
+ * Validates a LocalConfigurationObject
  */
 class LocalConfigurationValidator 
 {

@@ -8,5 +8,5 @@
 - [] Checks for bad configuration and gives helpful feedback
 - [x] Properly adjusts task command for specified system
 - [] Command for config check
-- [] Checks if all required programs are installed.
+- [x] Checks if all required programs are installed.
 - [x] Lists the required programs?

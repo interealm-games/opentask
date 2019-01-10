@@ -1,7 +1,7 @@
 package interealmGames.opentask.errors;
 
 /**
- * ...
+ * Indicates that no task group with name 'groupName' exists.
  */
 class GroupDoesNotExistError extends BaseError 
 {

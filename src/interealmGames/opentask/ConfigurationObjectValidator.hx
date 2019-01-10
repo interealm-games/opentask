@@ -4,8 +4,7 @@ import interealmGames.common.validation.ObjectValidator;
 import interealmGames.opentask.ConfigurationObject;
 
 /**
- * ...
- * @author dmcblue
+ * Validates a ConfigurationObject
  */
 class ConfigurationObjectValidator 
 {

@@ -2,6 +2,7 @@ package interealmGames.opentask;
 
 import Map in Dictionary;
 import interealmGames.opentask.LocalConfigurationValidator;
+
 /**
  * Adjusts the master configuration for a local user
  */
@@ -25,11 +26,21 @@ class LocalConfiguration
 		}
 	}
 	
-	public function getCommand(commandName:String):String {
-		return this.commands.get(commandName);
+	/**
+	 * Gets a Command path by the Program name
+	 * @param	programName
+	 * @return
+	 */
+	public function getCommand(programName:String):String {
+		return this.commands.get(programName);
 	}
 	
-	public function hasCommand(commandName:String):Bool {
-		return this.commands.exists(commandName);
+	/**
+	 * Checks if a Command exists for a Program
+	 * @param	programName
+	 * @return
+	 */
+	public function hasCommand(programName:String):Bool {
+		return this.commands.exists(programName);
 	}
 }

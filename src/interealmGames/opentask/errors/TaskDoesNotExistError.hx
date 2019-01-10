@@ -1,7 +1,7 @@
 package interealmGames.opentask.errors;
 
 /**
- * ...
+ * Indicates that no task with the name 'taskName' exists in the loaded configuration
  */
 class TaskDoesNotExistError extends BaseError 
 {

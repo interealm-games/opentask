@@ -5,8 +5,7 @@ using interealmGames.common.StringToolsExtension;
 import haxe.io.Path;
 
 /**
- * ...
- * @author dmcblue
+ * Manages display of Help messages
  */
 class Help 
 {
@@ -39,7 +38,12 @@ For information on the configuration files, go to: https://github.com/dmcblue/op
 	static public function display() {
 		var path = new Path(Sys.programPath());
 		var executableName = path.file;
+		
+		// In Neko, the filename is missing => https://github.com/HaxeFoundation/haxe/issues/5708
+		if (executableName.length == 0) {
+			executableName = 'opentask';
+		}
 		var helpText = StringTools.format(Help.HELP_TEXT, [executableName]);
-		Sys.println(helpText);
+		Sys.println(helpText); // Sys not Log
 	}
 }

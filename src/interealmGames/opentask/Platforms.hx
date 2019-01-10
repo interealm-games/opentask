@@ -1,7 +1,8 @@
 package interealmGames.opentask;
 
 /**
- * @author dmcblue
+ * Platforms supported by OpenTask.
+ * See PlatformTools for more details
  */
 enum Platforms 
 {

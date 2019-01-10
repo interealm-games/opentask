@@ -1,8 +1,7 @@
 package interealmGames.opentask;
 
 /**
- * ...
- * @author dmcblue
+ * Standardizes output for the program
  */
 class Log 
 {
@@ -26,6 +25,6 @@ class Log
 	}
 	
 	static public function warning(message:String) {
-		Sys.println(Log.PREFIX + ' ' + Log.WARNING + 'WARNING $message');
+		Sys.println(Log.PREFIX + ' ' + Log.WARNING + ' $message');
 	}
 }

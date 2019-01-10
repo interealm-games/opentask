@@ -5,8 +5,7 @@ import interealmGames.opentask.Platforms;
 import interealmGames.opentask.PlatformSpecificRequirement;
 import interealmGames.opentask.RequirementObject;
 /**
- * ...
- * @author dmcblue
+ * Represents a Required program
  */
 class Requirement 
 {
@@ -57,6 +56,11 @@ class Requirement
 		}
 	}
 	
+	/**
+	 * Gets the appropriate command for this Requirement, taking into account the System
+	 * @param	platform [OPTIONAL] Current platform
+	 * @return The command
+	 */
 	public function resolveCommand(?platform:Platforms):String {
 		if(platform == null) {
 			platform = PlatformTools.resolvePlatform();
@@ -75,6 +79,12 @@ class Requirement
 		return command;
 	}
 	
+	/**
+	 * Resolves the argument used to test the installation. Should return an exit code 0.
+	 * Defaults to '--version'
+	 * @param	platform [OPTIONAL] Current platform
+	 * @return The command line argument
+	 */
 	public function resolveTestArgument(?platform:Platforms):String {
 		if(platform == null) {
 			platform = PlatformTools.resolvePlatform();

@@ -1,7 +1,7 @@
 package interealmGames.opentask.errors;
 
 /**
- * 
+ * Indicates that a required command line argument is missing.
  */
 class MissingArgumentError extends BaseError 
 {

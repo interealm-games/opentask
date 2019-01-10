@@ -2,8 +2,7 @@ package interealmGames.opentask;
 import interealmGames.opentask.RequirementObject;
 
 /**
- * ...
- * @author dmcblue
+ * Validates a RequirementObject
  */
 class RequirementObjectValidator 
 {

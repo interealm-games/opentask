@@ -1,8 +1,6 @@
 package interealmGames.opentask;
 
-using interealmGames.common.fileSystem.FileSystemExtension;
-
-import haxe.io.Output;
+import sys.FileSystem;
 import haxe.io.Path;
 import interealmGames.common.commandLine.OptionSet;
 import interealmGames.opentask.errors.FileDoesNotExistsError;
@@ -13,7 +11,6 @@ import interealmGames.opentask.errors.InvalidLocalConfigurationError;
 import interealmGames.opentask.errors.MissingArgumentError;
 import interealmGames.opentask.errors.MissingCommandError;
 import interealmGames.opentask.errors.TaskDoesNotExistError;
-import sys.FileSystem;
 import interealmGames.common.commandLine.CommandLine;
 import interealmGames.opentask.Configuration;
 import interealmGames.opentask.errors.JsonParsingError;
@@ -27,6 +24,9 @@ import interealmGames.opentask.Log;
  */
 class Application 
 {
+	/**
+	 * Command line arguments for various actions
+	 */
 	static public var COMMAND_LIST = "list";
 	static public var COMMAND_REQUIREMENTS = "requirements";
 	static public var COMMAND_REQUIREMENTS_LIST = "list";
@@ -34,32 +34,50 @@ class Application
 	static public var COMMAND_RUN = "run";
 	static public var COMMAND_RUN_GROUP = "rungroup";
 	
+	/**
+	 * Command line options
+	 */
 	static public var OPTION_HELP = "help";
+	static public var OPTION_HELP_SHORT = "h";
+	static public var OPTION_VERSION = "version";
+	static public var OPTION_VERSION_SHORT = "v";
 	
+	/**
+	 * Current Application Version
+	 */
 	static public var VERSION = "0.1.0";
 	
+	/**
+	 * The currently loaded task configuration
+	 */
 	var configuration:Configuration;
+	/**
+	 * Default path and filename to look for configurations
+	 */
 	var configurationFilePath:String = "opentask.json";
 	
+	/**
+	 * The currently loaded local task configuration
+	 */
 	var localConfiguration:Null<LocalConfiguration> = null;
+	/**
+	 * Default path and filename to look for local configurations
+	 */
 	var localConfigurationFilePath:Null<String> = "opentask.local.json";
 	
 	public function new() 
 	{
 		try {
 			var options = CommandLine.getOptions();
-			//trace(options);
-			
 			var arguments = CommandLine.getArguments();
-			//trace(arguments);
 			
 			
-			if (options.hasShortOption('h') || options.hasLongOption('help')) {
+			if (options.hasShortOption(Application.OPTION_HELP_SHORT) || options.hasLongOption(Application.OPTION_HELP)) {
 				Help.display();
 				this.end();
 			}
 			
-			if (options.hasShortOption('v') || options.hasLongOption('version')) {
+			if (options.hasShortOption(Application.OPTION_VERSION_SHORT) || options.hasLongOption(Application.OPTION_VERSION)) {
 				ProgramInformation.display();
 				this.end();
 			}
@@ -68,10 +86,11 @@ class Application
 			this.setConfigurationPaths(options);
 			this.configuration = this.loadConfiguration(this.configurationFilePath);
 			
-			if (!FileSystem.exists(this.localConfigurationFilePath)) {
-				localConfiguration = this.loadLocalConfiguration(this.localConfigurationFilePath);
+			if (FileSystem.exists(this.localConfigurationFilePath)) {
+				this.localConfiguration = this.loadLocalConfiguration(this.localConfigurationFilePath);
 			}
 			
+			//arguments[0] is the OpenTask application
 			if (arguments.length < 2) {
 				throw new MissingCommandError();
 			}
@@ -83,11 +102,13 @@ class Application
 				Application.COMMAND_RUN_GROUP
 			];
 			
+			
 			var command = arguments[1];
 			
 			if (validCommands.indexOf(command) == -1) {
 				throw new InvalidCommandError(command);
 			}
+			
 			
 			if (command == Application.COMMAND_LIST) {
 				this.list(this.configuration, this.configurationFilePath);
@@ -107,33 +128,16 @@ class Application
 				}
 				this.runGroup(arguments[2], this.configuration, this.localConfiguration);
 			}
-			
-			
-			
-			/*
-			var paths = FileSystem.recursiveLoop(
-				"C:/www/interealm-games/editor-frontend/browser/src/interealmGames/browser/components", 
-				"scss"
-			);
-			for (path in paths) {
-				trace(path);
-			}
-			
-			//then validate the configuration
-			// ...
-			
-			trace(configuration);
-			trace(localConfiguration);
-			
-			trace(Sys.systemName()); //Windows
-			//*/
 		} catch (e:BaseError) {
 			this.end(e);
 		}
-		
-		// this.end();
 	}
 	
+	/**
+	 * Terminates the application gracefully. Any errors that occur are properly displayed and 
+	 * various helpful responses can be displayed.
+	 * @param	error Optional error
+	 */
 	public function end(?error:BaseError):Void {
 		if (error != null) {
 			Sys.println(error.toString());
@@ -154,6 +158,11 @@ class Application
 		Sys.exit(error != null ? 1 : 0);
 	}
 	
+	/**
+	 * Lists all tasks available in the configuration
+	 * @param	configuration The application's configuration
+	 * @param	taskPath The file location of the configuration.
+	 */
 	public function list(configuration:Configuration, taskPath:String):Void {
 		if(configuration.countTasks() > 0) {
 			Log.printLine("Available Tasks:");
@@ -186,8 +195,13 @@ class Application
 		Log.printLine('At $taskPath');
 	}
 	
-	public function loadConfiguration(configurationFilePath:String):Null<Configuration> {
-		// find configuration file
+	/**
+	 * Fetches the configuration file and creates a Configuration instance for the application
+	 * @param	configurationFilePath The location of the configuration file.
+	 * @return	The Configuration instance
+	 * @throws	InvalidConfigurationError
+	 */
+	public function loadConfiguration(configurationFilePath:String):Configuration {
 		var configuration:Configuration;
 		try {
 			var configurationObject:ConfigurationObject = cast this.loadJsonFile(configurationFilePath);
@@ -201,6 +215,12 @@ class Application
 		return configuration;
 	}
 	
+	/**
+	 * Fetches the contents of a JSON file and returns them as an object
+	 * @param	path The location of the JSON file.
+	 * @return	Dynamic Object with the contents.
+	 * @throws	JsonParsingError
+	 */
 	public function loadJsonFile(path:String):Null<Dynamic> {
 		var content:String = sys.io.File.getContent(path);
 		
@@ -214,7 +234,13 @@ class Application
 		return object;
 	}
 	
-	public function loadLocalConfiguration(localConfigurationFilePath:String):Null<LocalConfiguration> {
+	/**
+	 * Fetches the local configuration file, if it exists, and creates a LocalConfiguration instance for the application
+	 * @param	localConfigurationFilePath The location of the local configuration file.
+	 * @return	The LocalConfiguration instance
+	 * @throws	InvalidLocalConfigurationError
+	 */
+	public function loadLocalConfiguration(localConfigurationFilePath:String):LocalConfiguration {
 		// find configuration file
 		var localConfiguration:LocalConfiguration;
 		try{
@@ -229,6 +255,13 @@ class Application
 		return localConfiguration;
 	}
 	
+	/**
+	 * Handles all application tasks under the 'requirements' command.
+	 * @param	command The sub-command
+	 * @param	configuration The application's configuration
+	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
+	 * @throws	InvalidCommandError
+	 */
 	public function requirements(command:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		var validCommands:Array<String> = [
 			Application.COMMAND_REQUIREMENTS_LIST,
@@ -246,12 +279,20 @@ class Application
 		}
 	}
 	
+	/**
+	 * Runs a command from the Configuration
+	 * @param	taskName Name of the Task
+	 * @param	configuration The application's configuration
+	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
+	 * @throws	TaskDoesNotExistError
+	 */
 	public function run(taskName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		var task = configuration.getTask(taskName);
 		
 		if (task == null) {
 			throw new TaskDoesNotExistError(taskName);
 		}
+		
 		Log.printLine('Running Task: $taskName');
 		Log.printLine('-------------------------');
 		
@@ -262,6 +303,7 @@ class Application
 			Log.printLine('Set Working Directory: $cwd');
 			Sys.setCwd(cwd);
 		}
+		
 		var command = configuration.resolveCommand(task.command, localConfiguration);
 		var arguments = task.resolveArguments();
 		
@@ -275,21 +317,35 @@ class Application
 		}
 	}
 	
+	/**
+	 * Runs a group of tasks
+	 * @param	groupName The name of the group of Tasks
+	 * @param	configuration The application's configuration
+	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
+	 * @throws	GroupDoesNotExistError
+	 */
 	public function runGroup(groupName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		var groups = configuration.groups();
+		
 		if (!groups.exists(groupName)) {
 			throw new GroupDoesNotExistError(groupName);
 		}
+		
 		var tasks = groups.get(groupName);
 		Log.printLine('-------------------------');
 		Log.printLine('Running Group: $groupName');
 		Log.printLine('-------------------------');
 		Log.printLine('');
+		
 		for (task in tasks) {
 			this.run(task.name, configuration, localConfiguration);
 		}
 	}
 	
+	/**
+	 * Analyzes the given options and determines the user's preferred configuration paths
+	 * @param	options The options from the command line.
+	 */
 	public function setConfigurationPaths(options:OptionSet):Void {
 		if (options.hasShortOption('d') || options.hasLongOption('config-dir')) {
 			var path = '';
@@ -301,7 +357,7 @@ class Application
 			}
 			
 			if (path != '') {
-				//Path.addTrailingSlash will add a slash to a blank string
+				// Path.addTrailingSlash will add a slash to a blank string
 				path = haxe.io.Path.addTrailingSlash(path);
 				this.configurationFilePath = path + configurationFilePath;
 				this.localConfigurationFilePath = path + localConfigurationFilePath;
@@ -349,10 +405,15 @@ class Application
 		}
 	}
 	
+	/**
+	 * Displays the programs required by the configuration
+	 * @param	configuration The application's configuration
+	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
+	 */
 	public function showRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		if(configuration.countRequirements() > 0) {
 			Log.printLine("Required Programs:");
-			Log.printLine("----------------");
+			Log.printLine("------------------");
 			for (requirement in configuration.requirements()) {
 				Log.printLine(requirement.name);
 				var command = configuration.resolveCommand(requirement.command, localConfiguration);
@@ -368,20 +429,28 @@ class Application
 		}
 	}
 	
+	/**
+	 * Checks if all necessary programs are installed
+	 * @param	configuration The application's configuration
+	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
+	 */
 	public function testRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
 		if(configuration.countRequirements() > 0) {
 			Log.printLine("Testing Requirements:");
-			Log.printLine("----------------");
+			Log.printLine("---------------------");
 			for (requirement in configuration.requirements()) {
 				Log.printStart("Testing: " + requirement.name + "...");
 				var command = configuration.resolveCommand(requirement.command, localConfiguration);
 				var testArgument = requirement.resolveTestArgument();
-				trace(testArgument);
-				var exitCode = Sys.command(command, [testArgument]);
-				// var a = new sys.io.Process("echo dd", null );
-				Log.printEnd(exitCode == 0 ? 'installed.' : 'NOT FOUND!');
 				
-				Log.printLine();
+				var exitCode = 1;
+				try {
+					var process = new sys.io.Process(command, [testArgument]);
+					exitCode = process.exitCode(true);
+				}catch (e:Any) {
+					
+				}
+				Log.printEnd(exitCode == 0 ? 'installed.' : 'NOT FOUND!');
 			}
 		} else {
 			Log.warning("No required programs in configurations");

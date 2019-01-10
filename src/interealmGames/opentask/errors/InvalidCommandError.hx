@@ -1,7 +1,7 @@
 package interealmGames.opentask.errors;
 
 /**
- * 
+ * Indicates that an invalid or unknown command has been given by the user
  */
 class InvalidCommandError extends BaseError 
 {

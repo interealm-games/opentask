@@ -1,16 +1,13 @@
 package interealmGames.opentask;
-import interealmGames.common.dictionary.DictionaryTools;
-import interealmGames.opentask.TaskObject;
 
 import Map in Dictionary;
 
 import interealmGames.opentask.Log;
-import interealmGames.opentask.TaskObjectValidator;
 import interealmGames.opentask.PlatformSpecificsObject;
-import interealmGames.opentask.PlatformObject;
+import interealmGames.opentask.TaskObject;
+import interealmGames.opentask.TaskObjectValidator;
 /**
- * ...
- * @author dmcblue
+ * Represents a Task to run
  */
 class Task 
 {
@@ -33,7 +30,6 @@ class Task
 	public var cwd:String = "";
 	
 	/** Adjusts the task options by platform */
-	//var platformSpecifics:PlatformObject<PlatformSpecificsObject>
 	public var platformSpecifics:Dictionary<Platforms, PlatformSpecificsObject> = new Dictionary();
 	
 	public function new(taskObject:TaskObject) 
@@ -69,10 +65,10 @@ class Task
 		}
 	}
 	
-	public function formCommand(configuration:Configuration) {
-		
-	}
-	
+	/**
+	 * Gets command line argument applicable to the current Platform
+	 * @return
+	 */
 	public function resolveArguments():Array<String> {
 		var arguments = this.arguments;
 		var platform = PlatformTools.resolvePlatform();
@@ -118,6 +114,10 @@ class Task
 		return command;
 	}
 	
+	/**
+	 * Gets the right Working Directory for this Platform. Null if none is specified.
+	 * @return
+	 */
 	public function resolveCwd():Null<String> {
 		var cwd = this.cwd;
 		var platform = PlatformTools.resolvePlatform();

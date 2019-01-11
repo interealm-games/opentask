@@ -1,0 +1,7 @@
+{
+	"version": "0.1.0",
+	
+	"commands": {
+		"git": "C:\\Program Files\\Git\\cmd\\git.exe"
+	}
+}

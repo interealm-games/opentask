@@ -1,0 +1,34 @@
+{
+	"version": "0.1.0",
+	
+	"requirements": [{
+		"name": "git",
+		"command": "git"
+	},{
+		"name": "blerg",
+		"command": "blerg"
+	},{
+		"name": "ls",
+		"command": "ls",
+		"testArgument": ".",
+		"windows": {
+			"command": "dir",
+			"testArgument": "."
+		}
+	}],
+		
+	"tasks": [{
+		"name": "fetch",
+		"description": "Gets remote code",
+		"groups": [{
+			"name": "build",
+			"rank": 1
+		}],
+		"command": "git",
+		"arguments": ["pull"]
+	},{
+		"name": "folders",
+		"description": "Prints all the folders",
+		"command": "ls"
+	}]
+}

@@ -1,7 +1,5 @@
 # opentask
 
-haxe -cp common/src -main interealmGames.common.Test --interp
-
 The goal is to create a command line task runner executable that is platform / language independent 
 for language-ambiguous projects, lesser-used languages that do not have a robust tool set or more 
 general projects.
@@ -27,8 +25,13 @@ opentask run [task name]
 
 Schemas written in [Json Schema](https://json-schema.org/) in the `/schemas` folder.
 
+
+## Build
+```
 haxe -cp src -cp common/src -neko ./bin/opentask.n -main interealmGames.opentask.Main
 nekotools boot bin/opentask.n
+```
+
 
 ## Testing
 

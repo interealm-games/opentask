@@ -27,11 +27,23 @@ Schemas written in [Json Schema](https://json-schema.org/) in the `/schemas` fol
 
 
 ## Build
-```
-haxe -cp src -cp common/src -neko ./bin/opentask.n -main interealmGames.opentask.Main
-nekotools boot bin/opentask.n
-```
 
+You can build an executable from scratch:
+
+```bash
+haxe -cp src -cp common/src --cpp bin/cpp -main interealmGames.opentask.Main
+```
+This will yield the executable `bin/cpp/Main.exe` (or your platform equivalent)
+
+If you download a release of *opentask* for you system and make it available from the repo root, you can run:
+```bash
+opentask requirements test # checks if you have all required tools installed (cp fails for Windows :( )
+opentask rungroup init # first time only (gets submodules and haxelibs)
+opentask rungroup build
+```
+Which will create an executable at `bin/opentask.exe`  (or your platform equivalent)
+
+Using *opentask* to build *opentask*, FTW!
 
 ## Testing
 

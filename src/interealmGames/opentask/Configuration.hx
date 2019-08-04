@@ -46,7 +46,7 @@ class Configuration
 	 */
 	public function addRequirement(requirement:Requirement) {
 		if (!this._requirements.exists(requirement.command)) {
-			this._requirements.set(requirement.name, requirement);
+			this._requirements.set(requirement.command, requirement);
 		}
 	}
 	

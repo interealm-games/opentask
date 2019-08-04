@@ -84,37 +84,6 @@ class Task
 	}
 	
 	/**
-	 * Use Configuration#resolveCommand instead
-	 * @param	configuration
-	 * @param	localConfiguration
-	 * @return
-	 */
-	public function resolveCommand(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):String {
-		var command = this.command;
-		var platform = PlatformTools.resolvePlatform();
-		
-		if (localConfiguration != null) {
-			if (localConfiguration.hasCommand(this.command)) {
-				command = localConfiguration.getCommand(this.command);
-			}
-		} else {
-			var requirement = configuration.getRequirement(this.command);
-			if (requirement == null) {
-				//should this be an error?
-				// For now, just a warning
-				//trace('No found requirement for this command');
-				Log.warning('No requirement found for this command');
-			} else {
-				if (requirement.platforms.exists(platform)) {
-					command = requirement.resolveCommand(platform);
-				}
-			}
-		}
-		
-		return command;
-	}
-	
-	/**
 	 * Gets the right Working Directory for this Platform. Null if none is specified.
 	 * @return
 	 */

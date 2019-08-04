@@ -30,7 +30,7 @@ class Task
 	public var cwd:String = "";
 	
 	/** Adjusts the task options by platform */
-	public var platformSpecifics:Dictionary<Platforms, PlatformSpecificsObject> = new Dictionary();
+	public var platformSpecifics:Dictionary<Platform, PlatformSpecificsObject> = new Dictionary();
 	
 	public function new(taskObject:TaskObject) 
 	{
@@ -59,7 +59,7 @@ class Task
 		
 		if (Reflect.hasField(taskObject, 'platformSpecifics')) {
 			for (platformName in Reflect.fields(taskObject.platformSpecifics)) {
-				var platform:Platforms = Type.createEnum(Platforms, platformName);
+				var platform:Platform = Type.createEnum(Platform, platformName);
 				this.platformSpecifics.set(platform, Reflect.field(taskObject.platformSpecifics, platformName));
 			}
 		}

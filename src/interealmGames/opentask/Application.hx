@@ -3,7 +3,7 @@ package interealmGames.opentask;
 import sys.FileSystem;
 import haxe.io.Path;
 import interealmGames.common.commandLine.OptionSet;
-import interealmGames.opentask.errors.FileDoesNotExistsError;
+import interealmGames.opentask.errors.FileDoesNotExistError;
 import interealmGames.opentask.errors.GroupDoesNotExistError;
 import interealmGames.opentask.errors.InvalidCommandError;
 import interealmGames.opentask.errors.InvalidConfigurationError;
@@ -45,7 +45,7 @@ class Application
 	/**
 	 * Current Application Version
 	 */
-	static public var VERSION = "0.1.0";
+	static public var VERSION = "0.1.1";
 	
 	/**
 	 * The currently loaded task configuration
@@ -371,12 +371,8 @@ class Application
 				} else if (options.hasLongOption('config') && options.getLongValues('config').length > 0) {
 					path = options.getLongValues('config')[0];
 				}
-				
-				if (path != '') {
-					//Path.addTrailingSlash will add a slash to a blank string
-					path = haxe.io.Path.addTrailingSlash(path);
-					this.configurationFilePath = path + configurationFilePath;
-				}
+
+				this.configurationFilePath = path;
 			}
 			
 			if (options.hasShortOption('l') || options.hasLongOption('config-local')) {
@@ -395,13 +391,13 @@ class Application
 				}
 				
 				if (!FileSystem.exists(this.localConfigurationFilePath)) {
-					throw new FileDoesNotExistsError(this.localConfigurationFilePath);
+					throw new FileDoesNotExistError(this.localConfigurationFilePath);
 				}
 			}
 		}
 		
 		if (!FileSystem.exists(this.configurationFilePath)) {
-			throw new FileDoesNotExistsError(this.configurationFilePath);
+			throw new FileDoesNotExistError(this.configurationFilePath);
 		}
 	}
 	

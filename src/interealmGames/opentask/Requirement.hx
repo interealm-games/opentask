@@ -1,7 +1,7 @@
 package interealmGames.opentask;
 
 import Map in Dictionary;
-import interealmGames.opentask.Platforms;
+import interealmGames.opentask.Platform;
 import interealmGames.opentask.PlatformSpecificRequirement;
 import interealmGames.opentask.RequirementObject;
 /**
@@ -25,7 +25,7 @@ class Requirement
 	/** Semantic version of the program to be used */
 	public var version:String = "";
 	
-	public var platforms:Dictionary<Platforms, PlatformSpecificRequirement> = new Dictionary();
+	public var platforms:Dictionary<Platform, PlatformSpecificRequirement> = new Dictionary();
 	
 	public function new(requirementObject:RequirementObject) 
 	{
@@ -48,7 +48,7 @@ class Requirement
 			this.version = requirementObject.version;
 		}
 		
-		for (platform in Type.allEnums(Platforms)) {
+		for (platform in Type.allEnums(Platform)) {
 			var platformName = platform.getName();
 			if (Reflect.hasField(requirementObject, platformName)) {
 				this.platforms.set(platform, Reflect.getProperty(requirementObject, platformName));
@@ -61,7 +61,7 @@ class Requirement
 	 * @param	platform [OPTIONAL] Current platform
 	 * @return The command
 	 */
-	public function resolveCommand(?platform:Platforms):String {
+	public function resolveCommand(?platform:Platform):String {
 		if(platform == null) {
 			platform = PlatformTools.resolvePlatform();
 		}
@@ -85,7 +85,7 @@ class Requirement
 	 * @param	platform [OPTIONAL] Current platform
 	 * @return The command line argument
 	 */
-	public function resolveTestArgument(?platform:Platforms):String {
+	public function resolveTestArgument(?platform:Platform):String {
 		if(platform == null) {
 			platform = PlatformTools.resolvePlatform();
 		}

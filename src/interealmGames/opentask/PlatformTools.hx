@@ -1,20 +1,20 @@
 package interealmGames.opentask;
 
 import Sys;
-import interealmGames.opentask.Platforms;
+import interealmGames.opentask.Platform;
 
 /**
  * 
  */
 class PlatformTools 
 {
-	static public function resolvePlatform():Null<Platforms> {
+	static public function resolvePlatform():Null<Platform> {
 		//"Windows", "Linux", "BSD" and "Mac"
 		return switch(Sys.systemName()) {
-			case 'Windows': Platforms.windows;
-			case 'Linux': Platforms.linux;
-			case 'BSD': Platforms.bsd;
-			case 'Mac': Platforms.macos;
+			case 'Windows': Platform.windows;
+			case 'Linux': Platform.linux;
+			case 'BSD': Platform.bsd;
+			case 'Mac': Platform.macos;
 			default: null;
 		}
 	}

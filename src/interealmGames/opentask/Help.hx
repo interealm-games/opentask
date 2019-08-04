@@ -32,7 +32,7 @@ Commands:
   rungroup <group-name>
     Runs the commands for all tasks in the group, in the order of their ranking. Tied rankings are run in their order in the configuration file.
 
-For information on the configuration files, go to: https://github.com/dmcblue/opentask/
+For information on the configuration files, go to: https://github.com/interealm-games/opentask
 ";
 	
 	static public function display() {

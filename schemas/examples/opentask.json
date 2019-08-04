@@ -5,9 +5,6 @@
 		"name": "git",
 		"command": "git"
 	},{
-		"name": "blerg",
-		"command": "blerg"
-	},{
 		"name": "ls",
 		"command": "ls",
 		"testArgument": ".",
@@ -29,6 +26,12 @@
 	},{
 		"name": "folders",
 		"description": "Prints all the folders",
-		"command": "ls"
+		"command": "ls",
+		"arguments": ["-a"],
+		"platformSpecifics": {
+			"windows": {
+				"arguments": ["/AH"]
+			}
+		}
 	}]
 }

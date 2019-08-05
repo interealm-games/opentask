@@ -83,7 +83,7 @@
 			"rank": 2
 		}],
 		"command": "cp",
-		"arguments": ["bin/cpp/Main.exe", "bin/opentask.exe"],
+		"arguments": ["bin/cpp/Main", "bin/opentask"],
 		"platformSpecifics": {
 			"windows": {
 				"arguments": ["bin\\cpp\\Main.exe",  "/B", "bin\\opentask.exe",  "/B"]

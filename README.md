@@ -45,6 +45,8 @@ Which will create an executable at `bin/opentask.exe`  (or your platform equival
 
 Using *opentask* to build *opentask*, FTW!
 
+**Note**: If you are building on Haxe 3.4.7 or lower, you will need to change the build command to use `-cpp` instead of `--cpp`. Otherwise, this library should work in Haxe 3 or 4 just fine.
+
 ## Testing
 
 Currently only have testing for dependencies. Need to build tests for this project.

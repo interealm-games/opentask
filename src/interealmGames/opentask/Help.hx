@@ -29,8 +29,8 @@ Commands:
   run <task-name>
     Runs the command for the named task.
 	
-  rungroup <group-name>
-    Runs the commands for all tasks in the group, in the order of their ranking. Tied rankings are run in their order in the configuration file.
+  rungroup [-f | --force] <group-name>
+    Runs the commands for all tasks in the group, in the order of their ranking. Tied rankings are run in their order in the configuration file. The group will stop running if any task fails (with exit code > 0) unless the 'force' option is applied.
 
 For information on the configuration files, go to: https://github.com/interealm-games/opentask
 ";

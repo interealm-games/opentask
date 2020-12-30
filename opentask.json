@@ -1,6 +1,6 @@
 {
 	"version": "0.1.0",
-	
+
 	"requirements": [{
 		"name": "git",
 		"command": "git"
@@ -21,7 +21,7 @@
 			"testArgument": "/?"
 		}
 	}],
-		
+
 	"tasks": [{
 		"name": "init:git",
 		"description": "Initializes git submodules",
@@ -60,7 +60,7 @@
 			]
 		}
 	},
-	
+
 	{
 		"name": "build:cpp",
 		"description": "Transpiles Haxe to C++",

@@ -11,7 +11,9 @@ import interealmGames.opentask.errors.InvalidLocalConfigurationError;
 import interealmGames.opentask.errors.MissingArgumentError;
 import interealmGames.opentask.errors.MissingCommandError;
 import interealmGames.opentask.errors.TaskDoesNotExistError;
+import interealmGames.opentask.errors.TaskFailedError;
 import interealmGames.common.commandLine.CommandLine;
+import interealmGames.common.commandLine.CommandLineValues;
 import interealmGames.opentask.Configuration;
 import interealmGames.opentask.errors.JsonParsingError;
 import interealmGames.opentask.errors.BaseError;
@@ -39,13 +41,15 @@ class Application
 	 */
 	static public var OPTION_HELP = "help";
 	static public var OPTION_HELP_SHORT = "h";
+	static public var OPTION_FORCE = "force";
+	static public var OPTION_FORCE_SHORT = "f";
 	static public var OPTION_VERSION = "version";
 	static public var OPTION_VERSION_SHORT = "v";
 	
 	/**
 	 * Current Application Version
 	 */
-	static public var VERSION = "0.1.1";
+	static public var VERSION = "0.2.0";
 	
 	/**
 	 * The currently loaded task configuration
@@ -68,8 +72,12 @@ class Application
 	public function new() 
 	{
 		try {
-			var options = CommandLine.getOptions();
-			var arguments = CommandLine.getArguments();
+			var commandLineValues: CommandLineValues = CommandLine.process(
+				[Application.OPTION_FORCE],
+				[Application.OPTION_FORCE_SHORT]
+			);
+			var options = commandLineValues.options;
+			var arguments = commandLineValues.arguments;
 			
 			
 			if (options.hasShortOption(Application.OPTION_HELP_SHORT) || options.hasLongOption(Application.OPTION_HELP)) {
@@ -126,7 +134,16 @@ class Application
 				if (arguments.length < 3) {
 					throw new MissingArgumentError('Group Name');
 				}
-				this.runGroup(arguments[2], this.configuration, this.localConfiguration);
+
+				var force = options.hasShortOption(Application.OPTION_FORCE_SHORT)
+					|| options.hasLongOption(Application.OPTION_FORCE);
+
+				this.runGroup(
+					arguments[2],
+					this.configuration,
+					this.localConfiguration,
+					force
+				);
 			}
 		} catch (e:BaseError) {
 			this.end(e);
@@ -286,7 +303,7 @@ class Application
 	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
 	 * @throws	TaskDoesNotExistError
 	 */
-	public function run(taskName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
+	public function run(taskName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Int {
 		var task = configuration.getTask(taskName);
 		
 		if (task == null) {
@@ -309,12 +326,14 @@ class Application
 		
 		var line = command + ' ' + arguments.join(' ');
 		Log.printLine('Running Command: $line');
-		Sys.command(command, arguments);
+		var output = Sys.command(command, arguments);
 		
 		if(cwd != null) {
 			Log.printLine('Reset Working Directory: $cwd');
 			Sys.setCwd(currentCwd);
 		}
+
+		return output;
 	}
 	
 	/**
@@ -324,13 +343,18 @@ class Application
 	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
 	 * @throws	GroupDoesNotExistError
 	 */
-	public function runGroup(groupName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
+	public function runGroup(
+		groupName:String,
+		configuration:Configuration,
+		localConfiguration:Null<LocalConfiguration>,
+		force:Bool
+	):Void {
 		var groups = configuration.groups();
 		
 		if (!groups.exists(groupName)) {
 			throw new GroupDoesNotExistError(groupName);
 		}
-		
+
 		var tasks = groups.get(groupName);
 		Log.printLine('-------------------------');
 		Log.printLine('Running Group: $groupName');
@@ -338,7 +362,17 @@ class Application
 		Log.printLine('');
 		
 		for (task in tasks) {
-			this.run(task.name, configuration, localConfiguration);
+			var output = this.run(task.name, configuration, localConfiguration);
+			if (output > 0) {
+				Log.printLine('-------------------------');
+				Log.printLine('Error in Task: ${task.name}');
+
+				if (!force) {
+					Log.printLine('Stopping Group');
+					this.end(new TaskFailedError(task.name, output));
+				}
+				Log.printLine('-------------------------');
+			}
 		}
 	}
 	

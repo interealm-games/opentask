@@ -14,6 +14,24 @@ import interealmGames.opentask.Task;
  */
 class Configuration
 {
+	static public function sortTasks(tasks:Iterator<Task>):Array<Task> {
+		var ts:Array<Task> = [];
+		for(task in tasks) {
+			ts.push(task);
+		}
+		ts.sort(function(a:Task, b:Task):Int {
+			var sa = a.name;
+			var sb = b.name;
+			if (sa > sb) {
+				return 1;
+			} else if (sa < sb) {
+				return -1;
+			}
+			return 0;
+		});
+		return ts;
+	}
+
 	/** Version of this schema, semantic versioning */
 	public var version:String;
 	
@@ -123,7 +141,7 @@ class Configuration
 	public function groups():Dictionary<String, Array<Task>> {
 		var groups:Dictionary<String, Array<Task>> = new Dictionary();
 		
-		for (task in this.tasks()) {
+		for (task in this._tasks.iterator()) {
 			for (group in task.groups) {
 				if (!groups.exists(group.name)) {
 					groups.set(group.name, []);
@@ -186,7 +204,7 @@ class Configuration
 	 * Gets an Iterator for this Configuration's Tasks
 	 * @return
 	 */
-	public function tasks():Iterator<Task> {
-		return this._tasks.iterator();
+	public function tasks():Array<Task> {
+		return Configuration.sortTasks(this._tasks.iterator());
 	}
 }

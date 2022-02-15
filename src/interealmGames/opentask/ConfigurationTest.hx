@@ -78,4 +78,36 @@ class ConfigurationTest extends Test
 		Assert.equals("taskA", sorted[0].name);
 		Assert.equals("taskZ", sorted[1].name);
 	}
+
+	public function testGroupNames() {
+		var configuration = new Configuration({
+			version: "0.3.0",
+			tasks: [{
+				name: "taskZ",
+				command: "taskZ",
+				arguments: ["taskZ"],
+				groups: [{
+					"name": "groupZ",
+					"rank": 1
+				}, {
+					"name": "groupA",
+					"rank": 1
+				}]
+			}, {
+				name: "taskA",
+				command: "taskA",
+				arguments: ["taskA"],
+				groups: [{
+					"name": "groupB",
+					"rank": 1
+				}]
+			}]
+		});
+
+		var sorted = configuration.groupNames();
+		Assert.equals(3, sorted.length);
+		Assert.equals("groupA", sorted[0]);
+		Assert.equals("groupB", sorted[1]);
+		Assert.equals("groupZ", sorted[2]);
+	}
 }

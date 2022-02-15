@@ -199,7 +199,7 @@ class Application
 			Log.printLine();
 			Log.printLine("Available Groups (Group Name -> Tasks):");
 			Log.printLine("---------------------------------------");
-			for (groupName in configuration.groups().keys()) {
+			for (groupName in configuration.groupNames()) {
 				var line = groupName + ": ";
 				var taskNames = configuration.groups().get(groupName).map(function(task:Task) {
 					return task.name;

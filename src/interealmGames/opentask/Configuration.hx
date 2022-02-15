@@ -162,6 +162,28 @@ class Configuration
 		
 		return groups;
 	}
+
+	public function groupNames():Array<String> {
+		var groups:Dictionary<String, Int> = new Dictionary();
+		var groupNames = [];
+		
+		for (task in this._tasks.iterator()) {
+			for (group in task.groups) {
+				if (!groups.exists(group.name)) {
+					groups.set(group.name, 0);
+					groupNames.push(group.name);
+				}
+			}
+		}
+
+		groupNames.sort(function(a, b) {
+			if (a > b) { return 1; }
+			if (a < b) { return -1; }
+			return 0;
+		});
+
+		return groupNames;
+	}
 	
 	/**
 	 * Gets an Iterator for this Configuration's Requirements

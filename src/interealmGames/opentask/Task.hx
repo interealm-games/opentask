@@ -57,10 +57,10 @@ class Task
 			this.cwd = taskObject.cwd;
 		}
 		
-		if (Reflect.hasField(taskObject, 'platformSpecifics')) {
-			for (platformName in Reflect.fields(taskObject.platformSpecifics)) {
-				var platform:Platform = Type.createEnum(Platform, platformName);
-				this.platformSpecifics.set(platform, Reflect.field(taskObject.platformSpecifics, platformName));
+		for (platform in Type.allEnums(Platform)) {
+			var name = platform.getName();
+			if (Reflect.hasField(taskObject, name)) {
+				this.platformSpecifics.set(platform, Reflect.field(taskObject, name));
 			}
 		}
 	}
@@ -69,9 +69,8 @@ class Task
 	 * Gets command line argument applicable to the current Platform
 	 * @return
 	 */
-	public function resolveArguments():Array<String> {
+	public function resolveArguments(platform:Platform):Array<String> {
 		var arguments = this.arguments;
-		var platform = PlatformTools.resolvePlatform();
 		
 		if (this.platformSpecifics.exists(platform)) {
 			var pArguments = this.platformSpecifics.get(platform).arguments;
@@ -87,9 +86,8 @@ class Task
 	 * Gets the right Working Directory for this Platform. Null if none is specified.
 	 * @return
 	 */
-	public function resolveCwd():Null<String> {
+	public function resolveCwd(platform:Platform):Null<String> {
 		var cwd = this.cwd;
-		var platform = PlatformTools.resolvePlatform();
 		
 		if (this.platformSpecifics.exists(platform)) {
 			var pCwd = this.platformSpecifics.get(platform).cwd;

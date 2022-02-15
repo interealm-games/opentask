@@ -18,6 +18,7 @@ import interealmGames.opentask.Configuration;
 import interealmGames.opentask.errors.JsonParsingError;
 import interealmGames.opentask.errors.BaseError;
 import interealmGames.opentask.Help;
+import interealmGames.opentask.Platform;
 import interealmGames.opentask.ProgramInformation;
 import interealmGames.opentask.Log;
 
@@ -49,7 +50,7 @@ class Application
 	/**
 	 * Current Application Version
 	 */
-	static public var VERSION = "0.2.0";
+	static public var VERSION = "0.3.0";
 	
 	/**
 	 * The currently loaded task configuration
@@ -68,10 +69,13 @@ class Application
 	 * Default path and filename to look for local configurations
 	 */
 	var localConfigurationFilePath:Null<String> = "opentask.local.json";
+
+	var platform:Platform;
 	
 	public function new() 
 	{
 		try {
+			this.platform = PlatformTools.resolvePlatform();
 			var commandLineValues: CommandLineValues = CommandLine.process(
 				[Application.OPTION_FORCE],
 				[Application.OPTION_FORCE_SHORT]
@@ -314,15 +318,15 @@ class Application
 		Log.printLine('-------------------------');
 		
 		var currentCwd = Sys.getCwd();
-		var cwd = task.resolveCwd();
+		var cwd = task.resolveCwd(this.platform);
 		
 		if(cwd != null) {
 			Log.printLine('Set Working Directory: $cwd');
 			Sys.setCwd(cwd);
 		}
 		
-		var command = configuration.resolveCommand(task.command, localConfiguration);
-		var arguments = task.resolveArguments();
+		var command = configuration.resolveCommand(this.platform, task.command, localConfiguration);
+		var arguments = task.resolveArguments(this.platform);
 		
 		var line = command + ' ' + arguments.join(' ');
 		Log.printLine('Running Command: $line');
@@ -446,7 +450,7 @@ class Application
 			Log.printLine("------------------");
 			for (requirement in configuration.requirements()) {
 				Log.printLine(requirement.name);
-				var command = configuration.resolveCommand(requirement.command, localConfiguration);
+				var command = configuration.resolveCommand(this.platform, requirement.command, localConfiguration);
 				var commandLabel = "Command" + (command == requirement.command ? "" : " (localized)") + ": ";
 				
 				Log.printLine("\t" + commandLabel + command);
@@ -470,8 +474,8 @@ class Application
 			Log.printLine("---------------------");
 			for (requirement in configuration.requirements()) {
 				Log.printStart("Testing: " + requirement.name + "...");
-				var command = configuration.resolveCommand(requirement.command, localConfiguration);
-				var testArgument = requirement.resolveTestArgument();
+				var command = configuration.resolveCommand(this.platform, requirement.command, localConfiguration);
+				var testArgument = requirement.resolveTestArgument(this.platform);
 				
 				var exitCode = 1;
 				try {

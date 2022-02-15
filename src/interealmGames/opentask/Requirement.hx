@@ -61,11 +61,7 @@ class Requirement
 	 * @param	platform [OPTIONAL] Current platform
 	 * @return The command
 	 */
-	public function resolveCommand(?platform:Platform):String {
-		if(platform == null) {
-			platform = PlatformTools.resolvePlatform();
-		}
-		
+	public function resolveCommand(platform:Platform):String {
 		var command = this.command;
 		
 		if (this.platforms.exists(platform)) {
@@ -85,11 +81,7 @@ class Requirement
 	 * @param	platform [OPTIONAL] Current platform
 	 * @return The command line argument
 	 */
-	public function resolveTestArgument(?platform:Platform):String {
-		if(platform == null) {
-			platform = PlatformTools.resolvePlatform();
-		}
-		
+	public function resolveTestArgument(platform:Platform):String {
 		var testArgument = this.testArgument.length > 0 ? this.testArgument: Requirement.DEFAULT_TEST_ARGUMENT;
 		
 		if (this.platforms.exists(platform)) {

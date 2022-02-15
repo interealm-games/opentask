@@ -23,6 +23,25 @@ opentask run [task name]
 
 ## Specifications
 
+NOTE: Platform specifics are now out of date in the Json Schema files.
+All platform specifics are properties of the item they adjust:
+
+```javascript
+// 
+{
+	"version": "0.1.0",
+
+	"requirements": [{
+		"name": "copy",
+		"command": "cp",
+		"testArgument": "-version",
+		"windows": { // adjusts the requirements for windows
+			"command": "copy",
+			"testArgument": "/?"
+		}
+	}],
+```
+
 Schemas written in [Json Schema](https://json-schema.org/) in the `/schemas` folder.
 
 

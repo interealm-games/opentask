@@ -4,6 +4,9 @@ package interealmGames.opentask;
   * Describes a program
   */
 typedef RequirementObject = {
+	/** Adjusts the task options by platform */
+	> PlatformObject<PlatformSpecificRequirement>,
+
 	/** Name of the program */
 	name:String,
 	
@@ -17,17 +20,5 @@ typedef RequirementObject = {
 	?testArgument:String, 
 	
 	/** Semantic version of the program to be used */
-	?version:String,
-	
-	/** Replacement for 'command' on specific platforms */
-	?windows:PlatformSpecificRequirement,
-	
-	/**  */
-	?macos:PlatformSpecificRequirement,
-	
-	/**  */
-	?linux:PlatformSpecificRequirement,
-	
-	/**  */
-	?bsd:PlatformSpecificRequirement
+	?version:String
 }

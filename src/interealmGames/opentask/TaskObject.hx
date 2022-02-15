@@ -17,6 +17,9 @@ typedef GroupObject = {
  */
 typedef TaskObject =
 {
+	/** Adjusts the task options by platform */
+	> PlatformObject<PlatformSpecificsObject>,
+
 	/** Name to use at command line with the opentask executable */
 	name:String,
 	
@@ -33,8 +36,5 @@ typedef TaskObject =
 	?arguments:Array<String>,
 	
 	/** Current Working Directory for the command */
-	?cwd:String,
-	
-	/** Adjusts the task options by platform */
-	?platformSpecifics:PlatformObject<PlatformSpecificsObject>
+	?cwd:String
 }

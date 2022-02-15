@@ -41,11 +41,20 @@
 		"command": "git",
 		"arguments": ["submodule","update"]
 	},{
-		"name": "init:libs",
-		"description": "Installs haxelib dependencies",
+		"name": "init:haxe",
+		"description": "Fetches packages",
 		"groups": [{
 			"name": "init",
 			"rank": 3
+		}],
+		"command": "opentask",
+		"arguments": ["rungroup","init:haxe"]
+	},{
+		"name": "init:haxe:cpp",
+		"description": "Installs haxelib dependencies",
+		"groups": [{
+			"name": "init:haxe",
+			"rank": 1
 		}],
 		"command": "haxelib",
 		"arguments": [
@@ -59,6 +68,18 @@
 				"minimingw"
 			]
 		}
+	},{
+		"name": "init:haxe:utest",
+		"description": "Installs haxelib dependencies",
+		"groups": [{
+			"name": "init:haxe",
+			"rank": 2
+		}],
+		"command": "haxelib",
+		"arguments": [
+			"install",
+			"utest"
+		]
 	},
 
 	{
@@ -89,5 +110,22 @@
 				"arguments": ["bin\\cpp\\Main.exe",  "/B", "bin\\opentask.exe",  "/B"]
 			}
 		}
+	},
+
+	{
+		"name": "test",
+		"description": "Runs all tests",
+		"groups": [{
+			"name": "test",
+			"rank": 0
+		}],
+		"command": "haxe",
+		"arguments": [
+			"-lib", "utest",
+			"-cp", "src",
+			"-cp", "common/src",
+			"--interp",
+			"--main", "interealmGames.opentask.Test"
+		]
 	}]
 }

@@ -5,6 +5,7 @@ import Map in Dictionary;
 import interealmGames.common.dictionary.DictionaryTools;
 
 import interealmGames.opentask.ConfigurationObject;
+import interealmGames.opentask.Platform;
 import interealmGames.opentask.Requirement;
 import interealmGames.opentask.Task;
 
@@ -159,9 +160,8 @@ class Configuration
 	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
 	 * @return The command of the program
 	 */
-	public function resolveCommand(command:String, localConfiguration:Null<LocalConfiguration>):String {
+	public function resolveCommand(platform:Platform, command:String, ?localConfiguration:Null<LocalConfiguration>):String {
 		var _command = command;
-		var platform = PlatformTools.resolvePlatform();
 		
 		if (localConfiguration != null) {
 			if (localConfiguration.hasCommand(command)) {

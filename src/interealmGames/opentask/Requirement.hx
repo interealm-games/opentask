@@ -9,25 +9,23 @@ import interealmGames.opentask.RequirementObject;
  */
 class Requirement 
 {
-	static public var DEFAULT_TEST_ARGUMENT = "--version"; // ? --help
-	
 	/** Name of the program */
 	public var name:String;
-	
+
 	/** Default name/path of the executable as would be called from the terminal */
 	public var command:String = "";
-	
+
 	/** A path or url to where one can find the executable to install it. */
 	public var source:String = "";
-	
-	public var testArgument:String = "";
-	
+
+	public var testArgument:Null<String> = null;
+
 	/** Semantic version of the program to be used */
 	public var version:String = "";
-	
+
 	public var platforms:Dictionary<Platform, PlatformSpecificRequirement> = new Dictionary();
-	
-	public function new(requirementObject:RequirementObject) 
+
+	public function new(requirementObject:RequirementObject)
 	{
 		RequirementObjectValidator.validate(requirementObject);
 		this.name = requirementObject.name;
@@ -55,7 +53,7 @@ class Requirement
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the appropriate command for this Requirement, taking into account the System
 	 * @param	platform [OPTIONAL] Current platform
@@ -74,24 +72,21 @@ class Requirement
 		
 		return command;
 	}
-	
+
 	/**
 	 * Resolves the argument used to test the installation. Should return an exit code 0.
-	 * Defaults to '--version'
-	 * @param	platform [OPTIONAL] Current platform
+	 * @param	platform Current platform
 	 * @return The command line argument
 	 */
-	public function resolveTestArgument(platform:Platform):String {
-		var testArgument = this.testArgument.length > 0 ? this.testArgument: Requirement.DEFAULT_TEST_ARGUMENT;
-		
+	public function resolveTestArgument(platform:Platform):Null<String> {
 		if (this.platforms.exists(platform)) {
 			var platformRequirement = this.platforms.get(platform);
 			
 			if (Reflect.hasField(platformRequirement, 'testArgument')) {
-				testArgument = platformRequirement.testArgument;
+				return platformRequirement.testArgument;
 			}
 		}
 		
-		return testArgument;
+		return this.testArgument;
 	}
 }

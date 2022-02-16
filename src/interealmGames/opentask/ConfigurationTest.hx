@@ -110,4 +110,60 @@ class ConfigurationTest extends Test
 		Assert.equals("groupB", sorted[1]);
 		Assert.equals("groupZ", sorted[2]);
 	}
+
+	public function testResolveRequirementTest() {
+		var configuration = new Configuration({
+			version: "0.3.0",
+			lookupCommand: "which",
+			requirements: [{
+				name: "notcopy",
+				command: "cp",
+				windows: {
+					command: "copy"
+				}
+			}],
+			tasks: []
+		});
+
+		var commands = configuration.resolveRequirementTest(Platform.windows, "cp");
+		Assert.same(["which", "copy"], commands);
+
+		var commands = configuration.resolveRequirementTest(Platform.linux, "cp");
+		Assert.same(["which", "cp"], commands);
+
+		configuration = new Configuration({
+			version: "0.3.0",
+			lookupCommand: "which",
+			windows: {
+				lookupCommand: "where",
+			},
+			requirements: [{
+				name: "notcopy",
+				command: "cp",
+				windows: {
+					command: "copy"
+				}
+			}],
+			tasks: []
+		});
+
+		commands = configuration.resolveRequirementTest(Platform.windows, "cp");
+		Assert.same(["where", "copy"], commands);
+
+		configuration = new Configuration({
+			version: "0.3.0",
+			requirements: [{
+				name: "notcopy",
+				command: "cp",
+				windows: {
+					command: "copy"
+				}
+			}],
+			tasks: []
+		});
+
+		Assert.raises(function() {
+			commands = configuration.resolveRequirementTest(Platform.windows, "cp");
+		}, "NO_REQUIREMENT_LOOKUP: notcopy");
+	}
 }

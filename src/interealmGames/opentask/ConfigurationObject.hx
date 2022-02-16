@@ -7,6 +7,9 @@ import interealmGames.opentask.RequirementObject;
  */
 typedef ConfigurationObject =
 {
+	/** Adjusts options by platform */
+	> PlatformObject<PlatformConfigurationObject>,
+
 	/** Version of this schema, semantic versioning */
 	version:String,
 	
@@ -14,5 +17,7 @@ typedef ConfigurationObject =
 	tasks:Array<TaskObject>,
 	
 	/** The required programs needed to run the tasks */
-	?requirements:Array<RequirementObject>	
+	?requirements:Array<RequirementObject>,
+
+	?lookupCommand:String
 }

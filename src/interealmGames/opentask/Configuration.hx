@@ -1,5 +1,7 @@
 package interealmGames.opentask;
 
+import interealmGames.opentask.errors.NoRequirementLookupError;
+import interealmGames.opentask.errors.NoRequirementLookupError;
 import Map in Dictionary;
 
 import interealmGames.common.dictionary.DictionaryTools;
@@ -34,6 +36,10 @@ class Configuration
 
 	/** Version of this schema, semantic versioning */
 	public var version:String;
+
+	private var lookupCommand:Null<String> = null;
+
+	private var platforms:Dictionary<Platform, PlatformConfigurationObject> = new Dictionary();
 	
 	/** The required programs needed to run the tasks */
 	private var _requirements:Dictionary<String, Requirement> = new Dictionary();
@@ -55,6 +61,17 @@ class Configuration
 		if (Reflect.hasField(configurationObject, 'tasks')) {
 			for (taskObject in configurationObject.tasks) {
 				this.addTask(new Task(taskObject));
+			}
+		}
+
+		if (Reflect.hasField(configurationObject, 'lookupCommand')) {
+			this.lookupCommand = configurationObject.lookupCommand;
+		}
+
+		for (platform in Type.allEnums(Platform)) {
+			var platformName = platform.getName();
+			if (Reflect.hasField(configurationObject, platformName)) {
+				this.platforms.set(platform, Reflect.getProperty(configurationObject, platformName));
 			}
 		}
 	}
@@ -220,6 +237,28 @@ class Configuration
 		}
 		
 		return _command;
+	}
+
+	public function resolveRequirementTest(platform:Platform, command:String, ?localConfiguration:Null<LocalConfiguration>) {
+		var requirement = this.getRequirement(command);
+		var command = this.resolveCommand(platform, requirement.command, localConfiguration);
+		var testArgument = requirement.resolveTestArgument(platform);
+
+		if (testArgument == null) {
+			if(this.platforms.exists(platform)) {
+				if (Reflect.hasField(this.platforms.get(platform), 'lookupCommand')) {
+					return [this.platforms.get(platform).lookupCommand, command];
+				}
+			}
+
+			if (this.lookupCommand != null) {
+				return [this.lookupCommand, command];
+			}
+		} else {
+			return [command, testArgument];
+		}
+
+		throw new NoRequirementLookupError(requirement.name);
 	}
 	
 	/**

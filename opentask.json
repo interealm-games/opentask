@@ -1,6 +1,11 @@
 {
 	"version": "0.1.0",
 
+	"lookupCommand": "which",
+	"windows": {
+		"lookupCommand": "where"
+	},
+
 	"requirements": [{
 		"name": "git",
 		"command": "git"
@@ -15,7 +20,6 @@
 	},{
 		"name": "copy",
 		"command": "cp",
-		"testArgument": "-version",
 		"windows": {
 			"command": "copy",
 			"testArgument": "/?"

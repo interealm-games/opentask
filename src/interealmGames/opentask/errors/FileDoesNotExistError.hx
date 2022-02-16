@@ -9,6 +9,6 @@ class FileDoesNotExistError extends BaseError
 	
 	public function new(filename:String) 
 	{
-		super(JsonParsingError.TYPE, filename);
+		super(FileDoesNotExistError.TYPE, filename);
 	}
 }

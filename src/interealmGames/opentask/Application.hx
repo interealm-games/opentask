@@ -474,14 +474,13 @@ class Application
 			Log.printLine("---------------------");
 			for (requirement in configuration.requirements()) {
 				Log.printStart("Testing: " + requirement.name + "...");
-				var command = configuration.resolveCommand(this.platform, requirement.command, localConfiguration);
-				var testArgument = requirement.resolveTestArgument(this.platform);
+				var args = configuration.resolveRequirementTest(this.platform, requirement.command, localConfiguration);
 				
 				var exitCode = 1;
 				try {
-					var process = new sys.io.Process(command, [testArgument]);
+					var process = new sys.io.Process(args[0], args.slice(1));
 					exitCode = process.exitCode(true);
-				}catch (e:Any) {
+				} catch (e:Any) {
 					
 				}
 				Log.printEnd(exitCode == 0 ? 'installed.' : 'NOT FOUND!');

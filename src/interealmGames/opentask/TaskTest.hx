@@ -6,7 +6,7 @@ import utest.Assert;
 import utest.Async;
 import utest.Test;
 
-class TaskTest extends Test 
+class TaskTest extends Test
 {
 	public function testPlatformArgs() {
 		var task = new Task({

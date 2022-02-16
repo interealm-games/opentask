@@ -7,7 +7,7 @@ import interealmGames.opentask.RequirementObject;
 /**
  * Represents a Required program
  */
-class Requirement 
+class Requirement
 {
 	/** Name of the program */
 	public var name:String;
@@ -29,23 +29,23 @@ class Requirement
 	{
 		RequirementObjectValidator.validate(requirementObject);
 		this.name = requirementObject.name;
-		
+
 		if (Reflect.hasField(requirementObject, 'command')) {
 			this.command = requirementObject.command;
 		}
-		
+
 		if (Reflect.hasField(requirementObject, 'source')) {
 			this.source = requirementObject.source;
 		}
-		
+
 		if (Reflect.hasField(requirementObject, 'testArgument')) {
 			this.testArgument = requirementObject.testArgument;
 		}
-		
+
 		if (Reflect.hasField(requirementObject, 'version')) {
 			this.version = requirementObject.version;
 		}
-		
+
 		for (platform in Type.allEnums(Platform)) {
 			var platformName = platform.getName();
 			if (Reflect.hasField(requirementObject, platformName)) {
@@ -61,15 +61,15 @@ class Requirement
 	 */
 	public function resolveCommand(platform:Platform):String {
 		var command = this.command;
-		
+
 		if (this.platforms.exists(platform)) {
 			var platformRequirement = this.platforms.get(platform);
-			
+
 			if (Reflect.hasField(platformRequirement, 'command')) {
 				command = platformRequirement.command;
 			}
 		}
-		
+
 		return command;
 	}
 
@@ -81,12 +81,12 @@ class Requirement
 	public function resolveTestArgument(platform:Platform):Null<String> {
 		if (this.platforms.exists(platform)) {
 			var platformRequirement = this.platforms.get(platform);
-			
+
 			if (Reflect.hasField(platformRequirement, 'testArgument')) {
 				return platformRequirement.testArgument;
 			}
 		}
-		
+
 		return this.testArgument;
 	}
 }

@@ -4,9 +4,9 @@ import Sys;
 import interealmGames.opentask.Platform;
 
 /**
- * 
+ *
  */
-class PlatformTools 
+class PlatformTools
 {
 	static public function resolvePlatform():Null<Platform> {
 		//"Windows", "Linux", "BSD" and "Mac"

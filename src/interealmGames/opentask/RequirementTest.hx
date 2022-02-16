@@ -6,7 +6,7 @@ import utest.Assert;
 import utest.Async;
 import utest.Test;
 
-class RequirementTest extends Test 
+class RequirementTest extends Test
 {
 	public function testResolveCommand() {
 		var requirement = new Requirement({

@@ -3,9 +3,9 @@ package interealmGames.opentask;
 /**
  * Opentask
  */
-class Main 
+class Main
 {
-	static function main() 
+	static function main()
 	{
 		new Application();
 	}

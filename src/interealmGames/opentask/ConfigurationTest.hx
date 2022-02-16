@@ -7,7 +7,7 @@ import utest.Assert;
 import utest.Async;
 import utest.Test;
 
-class ConfigurationTest extends Test 
+class ConfigurationTest extends Test
 {
 	public function testResolveCommand() {
 		var configuration = new Configuration({

@@ -3,7 +3,7 @@ package interealmGames.opentask;
 /**
  * Validates a TaskObject
  */
-class TaskObjectValidator 
+class TaskObjectValidator
 {
 	static public function validate(taskObject:TaskObject):Bool {
 		return true;

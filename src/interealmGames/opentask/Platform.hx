@@ -4,7 +4,7 @@ package interealmGames.opentask;
  * Platforms supported by OpenTask.
  * See PlatformTools for more details
  */
-enum Platform 
+enum Platform
 {
 	windows;
 	macos;

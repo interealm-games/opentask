@@ -7,7 +7,7 @@ import haxe.io.Path;
 /**
  * Manages display of Help messages
  */
-class Help 
+class Help
 {
 	static private var HELP_TEXT = "
 Usage: %s [-h | --help] [-v | --version] [[ -d | --config-dir =<path>] | [-c | --config=<path>] [-l | --config-local=<path>]] <command> [<args>]
@@ -25,20 +25,20 @@ Commands:
 
   requirements [list | test]
     'list' shows all programs needed for the tasks. 'test' verifies that all the programs are installed and available.
-	
+
   run <task-name>
     Runs the command for the named task.
-	
+
   rungroup [-f | --force] <group-name>
     Runs the commands for all tasks in the group, in the order of their ranking. Tied rankings are run in their order in the configuration file. The group will stop running if any task fails (with exit code > 0) unless the 'force' option is applied.
 
 For information on the configuration files, go to: https://github.com/interealm-games/opentask
 ";
-	
+
 	static public function display() {
 		var path = new Path(Sys.programPath());
 		var executableName = path.file;
-		
+
 		// In Neko, the filename is missing => https://github.com/HaxeFoundation/haxe/issues/5708
 		if (executableName.length == 0) {
 			executableName = 'opentask';

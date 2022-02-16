@@ -3,7 +3,7 @@ package interealmGames.opentask;
 /**
  * Validates a LocalConfigurationObject
  */
-class LocalConfigurationValidator 
+class LocalConfigurationValidator
 {
 	static public function validate(localConfigurationObject:LocalConfigurationObject):Bool {
 		return true;

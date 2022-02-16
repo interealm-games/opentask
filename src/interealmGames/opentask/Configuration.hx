@@ -40,24 +40,24 @@ class Configuration
 	private var lookupCommand:Null<String> = null;
 
 	private var platforms:Dictionary<Platform, PlatformConfigurationObject> = new Dictionary();
-	
+
 	/** The required programs needed to run the tasks */
 	private var _requirements:Dictionary<String, Requirement> = new Dictionary();
-	
+
 	/** The tasks that can be run */
 	private var _tasks:Dictionary<String, Task> = new Dictionary();
-		
-	public function new(configurationObject:ConfigurationObject) 
+
+	public function new(configurationObject:ConfigurationObject)
 	{
 		ConfigurationObjectValidator.validate(configurationObject);
 		this.version = configurationObject.version;
-		
+
 		if (Reflect.hasField(configurationObject, 'requirements')) {
 			for (requirementObject in configurationObject.requirements) {
 				this.addRequirement(new Requirement(requirementObject));
 			}
 		}
-		
+
 		if (Reflect.hasField(configurationObject, 'tasks')) {
 			for (taskObject in configurationObject.tasks) {
 				this.addTask(new Task(taskObject));
@@ -75,7 +75,7 @@ class Configuration
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a Requirement to this Configruation
 	 * @param	requirement The Requirement to add
@@ -85,7 +85,7 @@ class Configuration
 			this._requirements.set(requirement.command, requirement);
 		}
 	}
-	
+
 	/**
 	 * Adds a task to this Configuration
 	 * @param	task The Task to add
@@ -95,7 +95,7 @@ class Configuration
 			this._tasks.set(task.name, task);
 		}
 	}
-	
+
 	/**
 	 * Gives the number of Requirments in this Configuration
 	 * @return The amount of Requirements
@@ -103,7 +103,7 @@ class Configuration
 	public function countRequirements():Int {
 		return DictionaryTools.size(this._requirements);
 	}
-	
+
 	/**
 	 * Gives the number of Tasks in this Configuration
 	 * @return The amount of Tasks
@@ -111,7 +111,7 @@ class Configuration
 	public function countTasks():Int {
 		return DictionaryTools.size(this._tasks);
 	}
-	
+
 	/**
 	 * Gets a Requirement by its command
 	 * @param	command The command of the Requirement
@@ -120,7 +120,7 @@ class Configuration
 	public function getRequirement(command:String):Null<Requirement> {
 		return this._requirements.get(command);
 	}
-	
+
 	/**
 	 * Gets a Task by its name
 	 * @param	taskName The name of the Task
@@ -129,7 +129,7 @@ class Configuration
 	public function getTask(taskName:String):Null<Task> {
 		return this._tasks.get(taskName);
 	}
-	
+
 	/**
 	 * Whether a Requirement exists given the command
 	 * @param	command The command of the Requirement
@@ -138,7 +138,7 @@ class Configuration
 	public function hasRequirement(command:String):Bool {
 		return this._requirements.exists(command);
 	}
-	
+
 	/**
 	 * Whether a Task exists given the name
 	 * @param	taskName The name of the Task
@@ -147,43 +147,43 @@ class Configuration
 	public function hasTask(taskName:String):Bool {
 		return this._tasks.exists(taskName);
 	}
-	
+
 	/**
 	 * Gets all groups and places them in a Map/Dictionary
-	 * whose keys is the Group name and whose values are Arrays 
+	 * whose keys is the Group name and whose values are Arrays
 	 * of the Group's Tasks, ordered by their Rank. No guarantees
 	 * are made about the ordering of non-ranked Tasks.
 	 * @return The Dictionary
 	 */
 	public function groups():Dictionary<String, Array<Task>> {
 		var groups:Dictionary<String, Array<Task>> = new Dictionary();
-		
+
 		for (task in this._tasks.iterator()) {
 			for (group in task.groups) {
 				if (!groups.exists(group.name)) {
 					groups.set(group.name, []);
 				}
-				
+
 				groups.get(group.name).push(task);
 			}
 		}
-		
+
 		for (groupName in groups.keys()) {
 			groups.get(groupName).sort(function(a:Task, b:Task):Int {
 				var groupA = a.groups.get(groupName);
 				var groupB = b.groups.get(groupName);
-				
+
 				return groupA.rank - groupB.rank;
 			});
 		}
-		
+
 		return groups;
 	}
 
 	public function groupNames():Array<String> {
 		var groups:Dictionary<String, Int> = new Dictionary();
 		var groupNames = [];
-		
+
 		for (task in this._tasks.iterator()) {
 			for (group in task.groups) {
 				if (!groups.exists(group.name)) {
@@ -201,7 +201,7 @@ class Configuration
 
 		return groupNames;
 	}
-	
+
 	/**
 	 * Gets an Iterator for this Configuration's Requirements
 	 * @return
@@ -209,8 +209,8 @@ class Configuration
 	public function requirements():Iterator<Requirement> {
 		return this._requirements.iterator();
 	}
-	
-	
+
+
 	/**
 	 * Finds the correct command, given localized requirements (System, LocalConfiguration).
 	 * @param	command The base command found in the Task
@@ -219,7 +219,7 @@ class Configuration
 	 */
 	public function resolveCommand(platform:Platform, command:String, ?localConfiguration:Null<LocalConfiguration>):String {
 		var _command = command;
-		
+
 		if (localConfiguration != null) {
 			if (localConfiguration.hasCommand(command)) {
 				_command = localConfiguration.getCommand(command);
@@ -235,7 +235,7 @@ class Configuration
 				}
 			}
 		}
-		
+
 		return _command;
 	}
 
@@ -260,7 +260,7 @@ class Configuration
 
 		throw new NoRequirementLookupError(requirement.name);
 	}
-	
+
 	/**
 	 * Gets an Iterator for this Configuration's Tasks
 	 * @return

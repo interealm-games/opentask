@@ -6,7 +6,7 @@ import interealmGames.opentask.ConfigurationObject;
 /**
  * Validates a ConfigurationObject
  */
-class ConfigurationObjectValidator 
+class ConfigurationObjectValidator
 {
 	static public function validate(configurationObject:ConfigurationObject):Bool {
 		return true;

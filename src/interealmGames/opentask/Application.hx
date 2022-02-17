@@ -1,5 +1,6 @@
 package interealmGames.opentask;
 
+import interealmGames.opentask.Opentask;
 import sys.FileSystem;
 import haxe.io.Path;
 import interealmGames.common.commandLine.OptionSet;
@@ -70,9 +71,13 @@ class Application
 	 */
 	var localConfigurationFilePath:Null<String> = "opentask.local.json";
 
+	var opentask:Opentask;
+
 	var platform:Platform;
 
-	public function new()
+	public function new() {}
+
+	public function run()
 	{
 		try {
 			this.platform = PlatformTools.resolvePlatform();
@@ -122,18 +127,23 @@ class Application
 			}
 
 
+			this.opentask = new Opentask(
+				this.platform,
+				this.configuration,
+				this.localConfiguration
+			);
 			if (command == Application.COMMAND_LIST) {
-				this.list(this.configuration, this.configurationFilePath);
+				this.opentask.list(this.configurationFilePath);
 			} else if (command == Application.COMMAND_REQUIREMENTS) {
 				if (arguments.length < 3) {
 					throw new MissingCommandError();
 				}
-				this.requirements(arguments[2], this.configuration, this.localConfiguration);
+				this.requirements(arguments[2]);
 			} else if (command == Application.COMMAND_RUN) {
 				if (arguments.length < 3) {
 					throw new MissingArgumentError('Task Name');
 				}
-				this.run(arguments[2], this.configuration, this.localConfiguration);
+				this.opentask.run(arguments[2]);
 			} else if (command == Application.COMMAND_RUN_GROUP) {
 				if (arguments.length < 3) {
 					throw new MissingArgumentError('Group Name');
@@ -142,10 +152,8 @@ class Application
 				var force = options.hasShortOption(Application.OPTION_FORCE_SHORT)
 					|| options.hasLongOption(Application.OPTION_FORCE);
 
-				this.runGroup(
+				this.opentask.runGroup(
 					arguments[2],
-					this.configuration,
-					this.localConfiguration,
 					force
 				);
 			}
@@ -172,48 +180,11 @@ class Application
 					|| Std.is(error, GroupDoesNotExistError)
 					|| Std.is(error, MissingArgumentError)
 			) {
-				this.list(this.configuration, this.configurationFilePath);
+				this.opentask.list(this.configurationFilePath);
 			}
 		}
 
 		Sys.exit(error != null ? 1 : 0);
-	}
-
-	/**
-	 * Lists all tasks available in the configuration
-	 * @param	configuration The application's configuration
-	 * @param	taskPath The file location of the configuration.
-	 */
-	public function list(configuration:Configuration, taskPath:String):Void {
-		if(configuration.countTasks() > 0) {
-			Log.printLine("Available Tasks:");
-			Log.printLine("----------------");
-			for (task in configuration.tasks()) {
-				var line = task.name;
-				if (task.description.length > 0) {
-					line += ": " + task.description;
-				}
-				Log.printLine(line);
-			}
-
-			Log.printLine();
-			Log.printLine("Available Groups (Group Name -> Tasks):");
-			Log.printLine("---------------------------------------");
-			for (groupName in configuration.groupNames()) {
-				var line = groupName + ": ";
-				var taskNames = configuration.groups().get(groupName).map(function(task:Task) {
-					return task.name;
-				});
-				line += taskNames.join(', ');
-
-				Log.printLine(line);
-			}
-		} else {
-			Log.warning("No tasks in configurations");
-		}
-
-		Log.printLine();
-		Log.printLine('At $taskPath');
 	}
 
 	/**
@@ -279,11 +250,9 @@ class Application
 	/**
 	 * Handles all application tasks under the 'requirements' command.
 	 * @param	command The sub-command
-	 * @param	configuration The application's configuration
-	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
 	 * @throws	InvalidCommandError
 	 */
-	public function requirements(command:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
+	public function requirements(command:String):Void {
 		var validCommands:Array<String> = [
 			Application.COMMAND_REQUIREMENTS_LIST,
 			Application.COMMAND_REQUIREMENTS_TEST
@@ -294,89 +263,9 @@ class Application
 		}
 
 		if (command == Application.COMMAND_REQUIREMENTS_LIST) {
-			this.showRequirements(configuration, localConfiguration);
+			this.opentask.showRequirements();
 		} else if (command == Application.COMMAND_REQUIREMENTS_TEST) {
-			this.testRequirements(configuration, localConfiguration);
-		}
-	}
-
-	/**
-	 * Runs a command from the Configuration
-	 * @param	taskName Name of the Task
-	 * @param	configuration The application's configuration
-	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
-	 * @throws	TaskDoesNotExistError
-	 */
-	public function run(taskName:String, configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Int {
-		var task = configuration.getTask(taskName);
-
-		if (task == null) {
-			throw new TaskDoesNotExistError(taskName);
-		}
-
-		Log.printLine('Running Task: $taskName');
-		Log.printLine('-------------------------');
-
-		var currentCwd = Sys.getCwd();
-		var cwd = task.resolveCwd(this.platform);
-
-		if(cwd != null) {
-			Log.printLine('Set Working Directory: $cwd');
-			Sys.setCwd(cwd);
-		}
-
-		var command = configuration.resolveCommand(this.platform, task.command, localConfiguration);
-		var arguments = task.resolveArguments(this.platform);
-
-		var line = command + ' ' + arguments.join(' ');
-		Log.printLine('Running Command: $line');
-		var output = Sys.command(command, arguments);
-
-		if(cwd != null) {
-			Log.printLine('Reset Working Directory: $cwd');
-			Sys.setCwd(currentCwd);
-		}
-
-		return output;
-	}
-
-	/**
-	 * Runs a group of tasks
-	 * @param	groupName The name of the group of Tasks
-	 * @param	configuration The application's configuration
-	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
-	 * @throws	GroupDoesNotExistError
-	 */
-	public function runGroup(
-		groupName:String,
-		configuration:Configuration,
-		localConfiguration:Null<LocalConfiguration>,
-		force:Bool
-	):Void {
-		var groups = configuration.groups();
-
-		if (!groups.exists(groupName)) {
-			throw new GroupDoesNotExistError(groupName);
-		}
-
-		var tasks = groups.get(groupName);
-		Log.printLine('-------------------------');
-		Log.printLine('Running Group: $groupName');
-		Log.printLine('-------------------------');
-		Log.printLine('');
-
-		for (task in tasks) {
-			var output = this.run(task.name, configuration, localConfiguration);
-			if (output > 0) {
-				Log.printLine('-------------------------');
-				Log.printLine('Error in Task: ${task.name}');
-
-				if (!force) {
-					Log.printLine('Stopping Group');
-					this.end(new TaskFailedError(task.name, output));
-				}
-				Log.printLine('-------------------------');
-			}
+			this.opentask.testRequirements();
 		}
 	}
 
@@ -436,57 +325,6 @@ class Application
 
 		if (!FileSystem.exists(this.configurationFilePath)) {
 			throw new FileDoesNotExistError(this.configurationFilePath);
-		}
-	}
-
-	/**
-	 * Displays the programs required by the configuration
-	 * @param	configuration The application's configuration
-	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
-	 */
-	public function showRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
-		if(configuration.countRequirements() > 0) {
-			Log.printLine("Required Programs:");
-			Log.printLine("------------------");
-			for (requirement in configuration.requirements()) {
-				Log.printLine(requirement.name);
-				var command = configuration.resolveCommand(this.platform, requirement.command, localConfiguration);
-				var commandLabel = "Command" + (command == requirement.command ? "" : " (localized)") + ": ";
-
-				Log.printLine("\t" + commandLabel + command);
-				Log.printLine("\tVersion: " + (requirement.version.length > 0 ? requirement.version : "(not specified)"));
-
-				Log.printLine();
-			}
-		} else {
-			Log.warning("No required programs in configurations");
-		}
-	}
-
-	/**
-	 * Checks if all necessary programs are installed
-	 * @param	configuration The application's configuration
-	 * @param	localConfiguration [OPTIONAL] The application's local configurations, if it exists
-	 */
-	public function testRequirements(configuration:Configuration, localConfiguration:Null<LocalConfiguration>):Void {
-		if(configuration.countRequirements() > 0) {
-			Log.printLine("Testing Requirements:");
-			Log.printLine("---------------------");
-			for (requirement in configuration.requirements()) {
-				Log.printStart("Testing: " + requirement.name + "...");
-				var args = configuration.resolveRequirementTest(this.platform, requirement.command, localConfiguration);
-
-				var exitCode = 1;
-				try {
-					var process = new sys.io.Process(args[0], args.slice(1));
-					exitCode = process.exitCode(true);
-				} catch (e:Any) {
-
-				}
-				Log.printEnd(exitCode == 0 ? 'installed.' : 'NOT FOUND!');
-			}
-		} else {
-			Log.warning("No required programs in configurations");
 		}
 	}
 }

@@ -7,6 +7,6 @@ class Main
 {
 	static function main()
 	{
-		new Application();
+		(new Application()).run();
 	}
 }

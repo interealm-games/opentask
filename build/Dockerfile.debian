@@ -1,0 +1,12 @@
+FROM debian:stable
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get update
+RUN apt-get install -y curl git haxe build-essential
+RUN mkdir ~/haxelib && haxelib setup ~/haxelib
+RUN mkdir -p /app
+WORKDIR /app/
+COPY . /app
+RUN haxelib install hxcpp
+RUN haxe -cp src -cp common/src --cpp bin/cpp -main interealmGames.opentask.Main
+RUN cp bin/cpp/Main bin/opentask

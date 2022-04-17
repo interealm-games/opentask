@@ -30,7 +30,7 @@ class Opentask
 	/**
 	 * Current Application Version
 	 */
-	static public var VERSION = "0.3.0";
+	static public var VERSION = "0.4.0";
 
 	/**
 	 * The currently loaded task configuration
@@ -120,7 +120,7 @@ class Opentask
 
 		var line = command + ' ' + arguments.join(' ');
 		Log.printLine('Running Command: $line');
-		var output = Sys.command(command, arguments);
+		var output = Sys.command(line);
 
 		if(cwd != null) {
 			Log.printLine('Reset Working Directory: $cwd');

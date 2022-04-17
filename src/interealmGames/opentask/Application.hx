@@ -51,7 +51,7 @@ class Application
 	/**
 	 * Current Application Version
 	 */
-	static public var VERSION = "0.3.0";
+	static public var VERSION = "0.4.0";
 
 	/**
 	 * The currently loaded task configuration

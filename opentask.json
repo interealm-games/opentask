@@ -1,5 +1,5 @@
 {
-	"version": "0.1.0",
+	"version": "0.4.0",
 
 	"lookupCommand": "which",
 	"windows": {
@@ -24,6 +24,10 @@
 			"command": "copy",
 			"testArgument": "/?"
 		}
+	},{
+		"name": "Docker",
+		"command": "docker",
+		"testArgument": "--version"
 	}],
 
 	"tasks": [{
@@ -128,6 +132,40 @@
 			"-cp", "common/src",
 			"--interp",
 			"--main", "interealmGames.opentask.Test"
+		]
+	},
+
+	{
+		"name": "build:debian:make",
+		"description": "Creates an executable in a debian environment",
+		"groups": [{
+			"name": "build:debian",
+			"rank": 0
+		}],
+		"command": "docker",
+		"arguments": [
+			"build",
+			"-t", "opentask-debian",
+			"-f", "build/Dockerfile.debian",
+			"."
+		]
+	}, {
+		"name": "build:debian:cp",
+		"description": "Pulls executable out of docker image",
+		"groups": [{
+			"name": "build:debian",
+			"rank": 1
+		}],
+		"command": "docker",
+		"arguments": [
+			"run",
+			"--rm",
+			"--entrypoint",
+			"/bin/sh",
+			"opentask-debian",
+			"-c", "\"cat bin/opentask\"",
+			">",
+			"opentask_debian"
 		]
 	}]
 }

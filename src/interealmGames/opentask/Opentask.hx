@@ -30,7 +30,7 @@ class Opentask
 	/**
 	 * Current Application Version
 	 */
-	static public var VERSION = "0.4.0";
+	static public var VERSION = "0.4.1";
 
 	/**
 	 * The currently loaded task configuration
@@ -97,7 +97,7 @@ class Opentask
 	 * @throws	TaskDoesNotExistError
 	 * @return Int The return value of the run command
 	 */
-	public function run(taskName:String):Int {
+	public function run(taskName:String, passOnArguments:String = ''):Int {
 		var task = this.configuration.getTask(taskName);
 
 		if (task == null) {
@@ -118,7 +118,7 @@ class Opentask
 		var command = this.configuration.resolveCommand(this.platform, task.command, localConfiguration);
 		var arguments = task.resolveArguments(this.platform);
 
-		var line = command + ' ' + arguments.join(' ');
+		var line = command + ' ' + arguments.join(' ') + ' ' + passOnArguments;
 		Log.printLine('Running Command: $line');
 		var output = Sys.command(line);
 

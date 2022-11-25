@@ -143,7 +143,8 @@ class Application
 				if (arguments.length < 3) {
 					throw new MissingArgumentError('Task Name');
 				}
-				this.opentask.run(arguments[2]);
+
+				this.opentask.run(arguments[2], CommandLine.getCommand().split(' -- ')[1]);
 			} else if (command == Application.COMMAND_RUN_GROUP) {
 				if (arguments.length < 3) {
 					throw new MissingArgumentError('Group Name');

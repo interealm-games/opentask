@@ -28,6 +28,8 @@ Commands:
 
   run <task-name>
     Runs the command for the named task.
+    Additional arguments can be passed to the task
+    by placing them after a ' -- ' after the task name.
 
   rungroup [-f | --force] <group-name>
     Runs the commands for all tasks in the group, in the order of their ranking. Tied rankings are run in their order in the configuration file. The group will stop running if any task fails (with exit code > 0) unless the 'force' option is applied.

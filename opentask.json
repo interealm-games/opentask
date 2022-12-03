@@ -165,7 +165,19 @@
 			"opentask-debian",
 			"-c", "\"cat bin/opentask\"",
 			">",
-			"opentask_debian"
+			"bin/opentask_debian"
+		]
+	}, {
+		"name": "build:debian:executable",
+		"description": "Makes file excutable",
+		"groups": [{
+			"name": "build:debian",
+			"rank": 1
+		}],
+		"command": "chmod",
+		"arguments": [
+			"+x",
+			"bin/opentask_debian"
 		]
 	}]
 }
